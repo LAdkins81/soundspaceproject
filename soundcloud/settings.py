@@ -31,6 +31,7 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
+    'apps.upload',
     'apps.loginandreg',
     'apps.soundcloud',
     'django.contrib.admin',

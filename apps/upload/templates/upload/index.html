@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Upload Music and Audio!</title>
+  </head>
+  <body>
+    {% if messages %}
+      {% for message in messages %}
+        {{message}}
+      {% endfor %}
+    {% endif %}
+    <h2>Upload to SoundCloud</h2>
+    <form class="" action="{% url 'upload:create' %}" enctype="multipart/form-data" method="post">
+      {% csrf_token %}
+      <input type="file" name="song" value=""><br>
+      Song Title:<br><input type="text" name="title" value=""><br>
+      Genre:<br><select class="" name="genre">
+        <option value="Alternative Rock">Alternative Rock</option>
+        <option value="Ambient">Ambient</option>
+        <option value="Classical">Classical</option>
+        <option value="Country">Country</option>
+        <option value="Comedy">Comedy</option>
+        <option value="Dance/EDM">Dance/EDM</option>
+        <option value="Drum & Bass">Drum & Bass</option>
+        <option value="Dubstep">Dubstep</option>
+        <option value="Electronic">Electronic</option>
+        <option value="Folk">Folk</option>
+        <option value="Hip Hop & Rap">Hip Hop & Rap</option>
+        <option value="House">House</option>
+        <option value="Indie">Indie</option>
+        <option value="Jazz & Blues">Jazz & Blues</option>
+        <option value="Latin">Latin</option>
+        <option value="Metal">Metal</option>
+        <option value="Piano">Piano</option>
+        <option value="R&B & Soul">R&B & Soul</option>
+        <option value="Reggae">Reggae</option>
+        <option value="Rock">Rock</option>
+        <option value="Soundtrack">Soundtrack</option>
+        <option value="Techno">Techno</option>
+        <option value="Trance">Trance</option>
+        <option value="Trap">Trap</option>
+        <option value="World">World</option>
+      </select><br>
+      Description:<br><textarea name="description" rows="8" cols="80"></textarea><br>
+      Tags:<br><input type="text" name="tags" placeholder="Add tags to describe the genre and mood of your track" value=""><br>
+      Image:<br><input type="file" name="image" value=""><br>
+
+      <input type="submit" name="upload" value="Upload a Song!">
+    </form>
+  </body>
+</html>
