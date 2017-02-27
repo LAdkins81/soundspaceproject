@@ -10,10 +10,11 @@
     <meta name="author" content="">
     <link rel="icon" href="">
 
-    <title>Soundspace</title>
+    <title>Soundspace Registration</title>
 
     <!-- Bootstrap core CSS -->
     <link href="{% static 'loginandreg/css/bootstrap.min.css' %}" rel="stylesheet">
+    <link href="{% static 'loginandreg/css/login.css' %}" rel="stylesheet">
 
     <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
     <link href="{% static 'loginandreg/css/ie10-viewport-bug-workaround.css' %}" rel="stylesheet">
@@ -57,7 +58,12 @@
     <div class="container">
 
       <div class="starter-template">
-        <img src='{% static 'loginandreg/image/banner.jpeg' %}' alt='Banner'>
+        <p>If you have an account, sign in <a href='{% url 'loginandreg:login' %}'>here.</a></p>
+        <form action='{% url 'loginandreg:register_user' %}' method='POST'>
+          {% csrf_token %}
+          {{regForm.as_p}}
+          <input type='submit' name='register' value='Register'>
+        </form>
       </div>
 
     </div><!-- /.container -->

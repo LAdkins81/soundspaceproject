@@ -32,6 +32,7 @@ ALLOWED_HOSTS = []
 
 INSTALLED_APPS = [
     'apps.loginandreg',
+    'apps.soundcloud',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',

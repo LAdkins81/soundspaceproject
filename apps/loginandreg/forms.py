@@ -4,7 +4,7 @@ from .models import User
 class RegisterForm(forms.ModelForm):
     class Meta:
         model = User
-        fields = ['alias', 'email', 'age', 'gender']
+        fields = ['name', 'email', 'age', 'gender']
     password = forms.CharField(min_length=8, max_length=100, widget=forms.PasswordInput)
     confirm_password = forms.CharField(min_length=8, max_length=100, widget=forms.PasswordInput)
 
