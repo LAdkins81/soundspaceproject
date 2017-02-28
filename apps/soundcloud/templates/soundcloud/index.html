@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-{% load staticfiles %}
+{% load static %}
 <html lang="en">
   <head>
     <meta charset="utf-8">
@@ -34,7 +34,7 @@
 
   <body>
 
-    <nav class="navbar navbar-inverse navbar-fixed-top">
+    <nav class="navbar navbar-light bg-faded navbar-fixed-top" style="background-color: #d3d3d3;">
       <div class="container">
         <div class="navbar-header">
           <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
@@ -43,9 +43,12 @@
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
           </button>
-          <a class="navbar-brand" href="#">Project name</a>
+          <a class="navbar-brand" href="{% url 'loginandreg:homepage' %}"><img src='{% static 'loginandreg/image/soundspace.png' %}'></a>
+          <a class="navbar-brand" href="{% url 'soundspace:stream' %}">Home</a>
+          <a class="navbar-brand" href="{% url 'upload:index' %}">Uploads</a>
         </div>
         <div id="navbar" class="navbar-collapse collapse">
+          <!-- <a href='{% url 'upload:index' %}'><button class="navbar-right">Uploads</button></a> -->
           <form class="navbar-form navbar-right" action='{% url 'soundspace:logout' %}' method='POST'>
             {% csrf_token %}
             <!-- <div class="form-group"> -->
@@ -54,8 +57,10 @@
             <!-- <div class="form-group"> -->
               <!-- <input type="password" placeholder="Password" class="form-control"> -->
             <!-- </div> -->
+
             <button type="submit" class="btn btn-success">Sign Out</button>
           </form>
+
         </div><!--/.navbar-collapse -->
       </div>
     </nav>
@@ -63,13 +68,39 @@
     <!-- Main jumbotron for a primary marketing message or call to action -->
     <div class="jumbotron">
       <div class="container">
-        <h1>Hello, {{request.session.username}}</h1>
-        <p>This is a template for a simple marketing or informational website. It includes a large callout called a jumbotron and three supporting pieces of content. Use it as a starting point to create something more unique.</p>
-        <p><a class="btn btn-primary btn-lg" href="#" role="button">Learn more &raquo;</a></p>
+        <h2>Hello, {{request.session.username}}</h2>
         <a href="{% url 'soundspace:update' id=request.session.user_id %}">Edit your account!</a><br>
         <h4> Here are some new users!:</h4>
         {% for user in users %}
         <a href="{% url 'soundspace:user' id=user.id %}">{{user.name}}</a><br>
+        <h2>Hello, {{request.session.username}}</h2>
+        {% for song in all_songs %}
+          <h4>{{song.title}} - {{song.artist}}</h4>
+          <audio controls>
+            <source src="" type="audio/mpeg">
+          </audio>
+          <div class="commentbox">
+            {% for comment in comments %}
+              {% if comment.song.id == song.id %}
+              <div class="comment">
+                <a href=''><p>{{comment.user.name}}</a> at {{comment.created_at|date:"M d H:i"}}</p>
+                <p>{{comment.comment}}</p>
+                <form action="{% url 'soundspace:deletecomment' %}" method="post">
+                  {% csrf_token %}
+                  <input hidden name='comment_id' value='{{comment.id}}'>
+                  <input type="submit" value="Delete Comment" />
+                </form>
+              </div>
+              {% endif %}
+            {% endfor %}
+
+            <form action="{% url 'soundspace:addcomment' %}" method="post">
+              {% csrf_token %}
+              {{commentForm.as_p}}
+            <input hidden name='song_id' value='{{song.id}}'>
+            <input type="submit" value="Comment" />
+            </form>
+          </div>
         {% endfor %}
       </div>
     </div>
@@ -78,26 +109,23 @@
       <!-- Example row of columns -->
       <div class="row">
         <div class="col-md-4">
-          <h2>Heading</h2>
-          <p>Donec id elit non mi porta gravida at eget metus. Fusce dapibus, tellus ac cursus commodo, tortor mauris condimentum nibh, ut fermentum massa justo sit amet risus. Etiam porta sem malesuada magna mollis euismod. Donec sed odio dui. </p>
-          <p><a class="btn btn-default" href="#" role="button">View details &raquo;</a></p>
+          <h2></h2>
+
         </div>
         <div class="col-md-4">
-          <h2>Heading</h2>
-          <p>Donec id elit non mi porta gravida at eget metus. Fusce dapibus, tellus ac cursus commodo, tortor mauris condimentum nibh, ut fermentum massa justo sit amet risus. Etiam porta sem malesuada magna mollis euismod. Donec sed odio dui. </p>
-          <p><a class="btn btn-default" href="#" role="button">View details &raquo;</a></p>
+          <h2></h2>
+
        </div>
         <div class="col-md-4">
-          <h2>Heading</h2>
-          <p>Donec sed odio dui. Cras justo odio, dapibus ac facilisis in, egestas eget quam. Vestibulum id ligula porta felis euismod semper. Fusce dapibus, tellus ac cursus commodo, tortor mauris condimentum nibh, ut fermentum massa justo sit amet risus.</p>
-          <p><a class="btn btn-default" href="#" role="button">View details &raquo;</a></p>
+          <h2></h2>
+
         </div>
       </div>
 
       <hr>
 
       <footer>
-        <p>&copy; 2016 Company, Inc.</p>
+
       </footer>
     </div> <!-- /container -->
 

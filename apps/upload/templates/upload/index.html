@@ -1,52 +1,116 @@
 <!DOCTYPE html>
-<html>
+{% load staticfiles %}
+<html lang="en">
   <head>
     <meta charset="utf-8">
-    <title>Upload Music and Audio!</title>
-  </head>
-  <body>
-    {% if messages %}
-      {% for message in messages %}
-        {{message}}
-      {% endfor %}
-    {% endif %}
-    <h2>Upload to SoundCloud</h2>
-    <form class="" action="{% url 'upload:create' %}" enctype="multipart/form-data" method="post">
-      {% csrf_token %}
-      <input type="file" name="song" value=""><br>
-      Song Title:<br><input type="text" name="title" value=""><br>
-      Genre:<br><select class="" name="genre">
-        <option value="Alternative Rock">Alternative Rock</option>
-        <option value="Ambient">Ambient</option>
-        <option value="Classical">Classical</option>
-        <option value="Country">Country</option>
-        <option value="Comedy">Comedy</option>
-        <option value="Dance/EDM">Dance/EDM</option>
-        <option value="Drum & Bass">Drum & Bass</option>
-        <option value="Dubstep">Dubstep</option>
-        <option value="Electronic">Electronic</option>
-        <option value="Folk">Folk</option>
-        <option value="Hip Hop & Rap">Hip Hop & Rap</option>
-        <option value="House">House</option>
-        <option value="Indie">Indie</option>
-        <option value="Jazz & Blues">Jazz & Blues</option>
-        <option value="Latin">Latin</option>
-        <option value="Metal">Metal</option>
-        <option value="Piano">Piano</option>
-        <option value="R&B & Soul">R&B & Soul</option>
-        <option value="Reggae">Reggae</option>
-        <option value="Rock">Rock</option>
-        <option value="Soundtrack">Soundtrack</option>
-        <option value="Techno">Techno</option>
-        <option value="Trance">Trance</option>
-        <option value="Trap">Trap</option>
-        <option value="World">World</option>
-      </select><br>
-      Description:<br><textarea name="description" rows="8" cols="80"></textarea><br>
-      Tags:<br><input type="text" name="tags" placeholder="Add tags to describe the genre and mood of your track" value=""><br>
-      Image:<br><input type="file" name="image" value=""><br>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <link rel="icon" href="">
 
-      <input type="submit" name="upload" value="Upload a Song!">
-    </form>
+    <title>Upload your music and audio on Soundspace</title>
+
+    <!-- Bootstrap core CSS -->
+    <link href="{% static 'soundcloud/css/bootstrap.min.css' %}" rel="stylesheet">
+
+    <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
+    <link href="{% static 'soundcloud/css/ie10-viewport-bug-workaround.css' %}" rel="stylesheet">
+
+    <!-- Custom styles for this template -->
+    <link href="{% static 'soundcloud/css/jumbotron.css' %}" rel="stylesheet">
+
+    <!-- Just for debugging purposes. Don't actually copy these 2 lines! -->
+    <!--[if lt IE 9]><script src="../../assets/js/ie8-responsive-file-warning.js"></script><![endif]-->
+    <script src="{% static 'soundcloud/js/ie-emulation-modes-warning.js' %}"></script>
+
+    <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
+      <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+    <![endif]-->
+  </head>
+
+  <body>
+
+    <nav class="navbar navbar-light bg-faded navbar-fixed-top" style="background-color: #d3d3d3;">
+      <div class="container">
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="navbar-brand" href="{% url 'loginandreg:homepage' %}"><img src='{% static 'loginandreg/image/soundspace.png' %}'></a>
+          <a class="navbar-brand" href="{% url 'soundspace:stream' %}">Home</a>
+          <a class="navbar-brand" href="{% url 'upload:index' %}">Uploads</a>
+        </div>
+        <div id="navbar" class="navbar-collapse collapse">
+          <!-- <a href='{% url 'upload:index' %}'><button class="navbar-right">Uploads</button></a> -->
+          <form class="navbar-form navbar-right" action='{% url 'soundspace:logout' %}' method='POST'>
+            {% csrf_token %}
+            <!-- <div class="form-group"> -->
+              <!-- <input type="text" placeholder="Email" class="form-control"> -->
+            <!-- </div> -->
+            <!-- <div class="form-group"> -->
+              <!-- <input type="password" placeholder="Password" class="form-control"> -->
+            <!-- </div> -->
+            <button type="submit" class="btn btn-success">Sign Out</button>
+          </form>
+
+        </div><!--/.navbar-collapse -->
+      </div>
+    </nav>
+
+    <!-- Main jumbotron for a primary marketing message or call to action -->
+    <div class="jumbotron">
+      <div class="container">
+        <center>
+        {% if messages %}
+          {% for message in messages %}
+            {{message}}
+          {% endfor %}
+        {% endif %}
+        <h2>Upload to SoundSpace</h2>
+        <form class="" action="{% url 'upload:create' %}" enctype="multipart/form-data" method="post">
+          {% csrf_token %}
+          {{docForm.as_p}}
+          <input type="submit" name="upload" value="Upload a Song!">
+        </form
+      </center>
+      </div>
+    </div>
+
+    <div class="container">
+      <!-- Example row of columns -->
+      <div class="row">
+        <div class="col-md-4">
+
+        </div>
+        <div class="col-md-4">
+
+       </div>
+        <div class="col-md-4">
+
+        </div>
+      </div>
+
+      <hr>
+
+      <footer>
+      </footer>
+    </div> <!-- /container -->
+
+
+    <!-- Bootstrap core JavaScript
+    ================================================== -->
+    <!-- Placed at the end of the document so the pages load faster -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+    <script>window.jQuery || document.write('<script src="{% static 'soundcloud/js/jquery.min.js' %}"><\/script>')</script>
+    <script src="{% static 'soundcloud/js/bootstrap.min.js'%}"></script>
+    <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
+    <script src="{% static 'soundcloud/js/ie10-viewport-bug-workaround.js'%}"></script>
   </body>
 </html>
