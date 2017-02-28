@@ -43,6 +43,7 @@ def login_user(request):
                 messages.add_message(request, messages.ERROR, 'Username/Password does not match')
                 return redirect(reverse('loginandreg:login'))
             else:
-                request.session['username'] = response['username']
-                request.session['user_id'] = response['uid']
+                user=User.objects.get(email=request.POST['email'])
+                request.session['username'] = user.name
+                request.session['user_id'] = user.id
                 return redirect(reverse('soundspace:stream'))

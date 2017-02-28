@@ -66,6 +66,11 @@
         <h1>Hello, {{request.session.username}}</h1>
         <p>This is a template for a simple marketing or informational website. It includes a large callout called a jumbotron and three supporting pieces of content. Use it as a starting point to create something more unique.</p>
         <p><a class="btn btn-primary btn-lg" href="#" role="button">Learn more &raquo;</a></p>
+        <a href="{% url 'soundspace:update' id=request.session.user_id %}">Edit your account!</a><br>
+        <h4> Here are some new users!:</h4>
+        {% for user in users %}
+        <a href="{% url 'soundspace:user' id=user.id %}">{{user.name}}</a><br>
+        {% endfor %}
       </div>
     </div>
 

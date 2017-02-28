@@ -44,6 +44,8 @@ class User(models.Model):
     email = models.EmailField(unique=True)
     password = models.CharField(max_length=100)
     age = models.IntegerField(null=True)
+    image = models.FileField(upload_to='profileimage', null=True)
+    description= models.TextField(max_length=2000, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     objects = UserManager()

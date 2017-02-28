@@ -8,7 +8,7 @@ class Document(models.Model):
     genre = models.CharField(max_length=45)
     title = models.CharField(max_length=45)
     tags = models.CharField(max_length=45)
-    image = models.FileField(max_length=45)
+    image = models.FileField(upload_to='documents/', null=True)
     song = models.FileField(upload_to='documents/')
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)

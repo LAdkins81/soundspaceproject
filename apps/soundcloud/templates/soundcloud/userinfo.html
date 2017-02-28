@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>User Profile Page</title>
+  </head>
+  <body>
+    <h1>{{user.name}}</h1>
+    {% if user.description %}
+    <p>{{user.description}}</p>
+    {% endif %}
+    <a href="{% url 'soundspace:stream' %}">Back to Dashboard</a>
+    <h3>Playlists:</h3>
+    <h3>Tracks:</h3>
+    <h3>Reposts:</h3>
+    <p>Total Number of Followers:</p>
+    <p>**Profile image of 10 followers goes here**<p>
+    <p>Total Number Following:</p>
+    <p>**Profile image of most recent 3 following goes here**</p>
+    <p>Link for user to follow this same person</p>
+    <form action="" method="post">
+      {% csrf_token %}
+      <p>Profile image of most recent 3 following</p>
+      <input type="submit" name="" value="Follow">
+    </form>
+  </body>
+</html>

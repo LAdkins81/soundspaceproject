@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+{% load staticfiles %}
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Edit Your Page!</title>
+  </head>
+  <body>
+    <h1>Hey {{request.session.username}}, edit your page here!</h1>
+    <form class="" action="{% url 'soundspace:update' id=request.session.user_id %}" enctype="multipart/form-data" method="post">
+      {% csrf_token %}
+      Name:<br><input type="text" name="name" value=""><br>
+      {% if user.image %}
+      <img src="../../../static/{{user.image}}" alt="profilepic"><br>
+      {% endif %}
+      Profile Picture:<br><input type="file" name="image" value=""><br>
+      Gender:<br><select class="" name="gender">
+        <option value="">---</option>
+        <option value="Male">Male</option>
+        <option value="Female">Female</option>
+        <option value="Other">Other</option>
+      </select><br>
+      Page Description:<br><textarea name="description" rows="8" cols="80"></textarea><br>
+      Email:<br><input type="text" name="email" value=""><br>
+      Old Password:<br><input type="password" name="oldpassword" value=""><br>
+      New Password:<br><input type="password" name="newpassword" value=""><br>
+      Confirm New Password:<br><input type="password" name="confirm" value=""><br>
+      Age:<br><input type="text" name="age" value=""><br>
+      <input type="submit" name="upload" value="Edit your profile!">
+    </form>
+  </body>
+</html>

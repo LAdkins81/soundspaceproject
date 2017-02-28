@@ -18,7 +18,7 @@ from django.contrib import admin
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
-    url(r'^loginandreg/', include('apps.loginandreg.urls', namespace='loginandreg')),
+    url(r'^', include('apps.loginandreg.urls', namespace='loginandreg')),
     url(r'^soundspace/', include('apps.soundcloud.urls', namespace='soundspace')),
     url(r'^upload/', include('apps.upload.urls', namespace='upload')),
 ]
