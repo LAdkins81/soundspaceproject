@@ -36,6 +36,7 @@ class DocumentForm(forms.ModelForm):
 
         }
         widgets = {
-            'description': forms.Textarea(attrs={'rows': 2, 'cols': 40})
+            'description': forms.Textarea(attrs={'rows': 2, 'cols': 40}),
+            'tags': forms.Textarea(attrs={'rows': 1, 'cols': 40})
           }
     genre = forms.ChoiceField(choices=GENRE_CHOICES, required=False)

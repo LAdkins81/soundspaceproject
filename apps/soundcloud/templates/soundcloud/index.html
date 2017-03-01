@@ -72,6 +72,44 @@
         <h2>Hello, {{request.session.username}}</h2>
         <a href="{% url 'soundspace:update_profile' id=request.session.user_id %}">Edit your account!</a><br>
         <h4> Here are some new users:</h4>
+        <form method="get" action="{% url 'soundspace:search' %}">
+          <label for="id_q">Search:</label>
+          <input type="text" name="q" id="id_q"/>
+          <input type="submit" value="Submit"/>
+        </form>
+        <h4> Here are some new users!:</h4>
+        {% for user in users %}
+        <a href="{% url 'soundspace:user' id=user.id %}">{{user.name}}</a><br>
+        <h2>Hello, {{request.session.username}}</h2>
+        {% for song in all_songs %}
+          <h4>{{song.title}} - {{song.artist}}</h4>
+          <audio controls>
+            <source src="" type="audio/mpeg">
+          </audio>
+          <div class="commentbox">
+            {% for comment in comments %}
+              {% if comment.song.id == song.id %}
+              <div class="comment">
+                <a href=''><p>{{comment.user.name}}</a> at {{comment.created_at|date:"M d H:i"}}</p>
+                <p>{{comment.comment}}</p>
+                <form action="{% url 'soundspace:deletecomment' %}" method="post">
+                  {% csrf_token %}
+                  <input hidden name='comment_id' value='{{comment.id}}'>
+                  <input type="submit" value="Delete Comment" />
+                </form>
+              </div>
+                {% endif %}
+              {% endfor %}
+            {% endfor %}
+
+            <form action="{% url 'soundspace:addcomment' %}" method="post">
+              {% csrf_token %}
+              {{commentForm.as_p}}
+            <input hidden name='song_id' value='{{song.id}}'>
+            <input type="submit" value="Comment" />
+            </form>
+          </div>
+        {% endfor %}
       </div>
     </div>
 

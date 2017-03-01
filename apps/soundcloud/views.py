@@ -4,6 +4,13 @@ from ..upload.models import Song
 from ..loginandreg.models import User
 from .models import Comment, Relationship
 from .forms import CommentForm, UpdateForm
+from .utils import *
+
+QUERY="search-query"
+
+MODEL_MAP = {
+    Song: ["title","genre","artist","description"],
+    }
 
 def index(request):
     users=User.objects.all()
@@ -76,3 +83,16 @@ def unfollow(request):
         profile_user_id = request.POST['unfollowid']
         response = Relationship.objects.unfollow(request.POST)
         return redirect(reverse('soundspace:user', kwargs={'id':profile_user_id}))
+
+def search(request):
+    query_string = ''
+    found_entries = None
+    if ('q' in request.GET) and request.GET['q'].strip():
+        query_string = request.GET['q']
+        song_query = get_query(query_string, ['artist','description','genre','title'])
+        found_entries = Song.objects.filter(song_query).order_by('-title')
+    context={
+        'query_string': query_string,
+        'found_entries': found_entries
+    }
+    return render(request, 'soundcloud/search.html', context)
