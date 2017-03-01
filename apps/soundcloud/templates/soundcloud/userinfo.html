@@ -1,27 +1,159 @@
 <!DOCTYPE html>
-<html>
+{% load static %}
+<html lang="en">
   <head>
     <meta charset="utf-8">
-    <title>User Profile Page</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <link rel="icon" href="">
+
+    <title>Profile Page</title>
+
+    <!-- Bootstrap core CSS -->
+    <link href="{% static 'soundcloud/css/bootstrap.min.css' %}" rel="stylesheet">
+
+    <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
+    <link href="{% static 'soundcloud/css/ie10-viewport-bug-workaround.css' %}" rel="stylesheet">
+
+    <!-- Custom styles for this template -->
+    <link href="{% static 'soundcloud/css/jumbotron.css' %}" rel="stylesheet">
+
+    <!-- Just for debugging purposes. Don't actually copy these 2 lines! -->
+    <!--[if lt IE 9]><script src="../../assets/js/ie8-responsive-file-warning.js"></script><![endif]-->
+    <script src="{% static 'soundcloud/js/ie-emulation-modes-warning.js' %}"></script>
+
+    <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
+      <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+    <![endif]-->
   </head>
+
   <body>
-    <h1>{{user.name}}</h1>
-    {% if user.description %}
-    <p>{{user.description}}</p>
-    {% endif %}
-    <a href="{% url 'soundspace:stream' %}">Back to Dashboard</a>
-    <h3>Playlists:</h3>
-    <h3>Tracks:</h3>
-    <h3>Reposts:</h3>
-    <p>Total Number of Followers:</p>
-    <p>**Profile image of 10 followers goes here**<p>
-    <p>Total Number Following:</p>
-    <p>**Profile image of most recent 3 following goes here**</p>
-    <p>Link for user to follow this same person</p>
-    <form action="" method="post">
-      {% csrf_token %}
-      <p>Profile image of most recent 3 following</p>
-      <input type="submit" name="" value="Follow">
-    </form>
+
+    <nav class="navbar navbar-light bg-faded navbar-fixed-top" style="background-color: #d3d3d3;">
+      <div class="container">
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="navbar-brand" href="{% url 'loginandreg:homepage' %}"><img src='{% static 'loginandreg/image/soundspace.png' %}'></a>
+          <a class="navbar-brand" href="{% url 'soundspace:stream' %}">Home</a>
+          <a class="navbar-brand" href="{% url 'upload:index' %}">Uploads</a>
+          <a class="navbar-brand" href="{% url 'soundspace:user' id=request.session.user_id %}">{{request.session.username}}</a>
+        </div>
+        <div id="navbar" class="navbar-collapse collapse">
+          <!-- <a href='{% url 'upload:index' %}'><button class="navbar-right">Uploads</button></a> -->
+          <form class="navbar-form navbar-right" action='{% url 'soundspace:logout' %}' method='POST'>
+            {% csrf_token %}
+            <!-- <div class="form-group"> -->
+              <!-- <input type="text" placeholder="Email" class="form-control"> -->
+            <!-- </div> -->
+            <!-- <div class="form-group"> -->
+              <!-- <input type="password" placeholder="Password" class="form-control"> -->
+            <!-- </div> -->
+
+            <button type="submit" class="btn btn-success">Sign Out</button>
+          </form>
+
+        </div><!--/.navbar-collapse -->
+      </div>
+    </nav>
+
+    <div class="jumbotron">
+      <div class="container">
+        <h2>{{profile_user.name}}</h2>
+        {% if profile_user.description %}
+          s<p>{{profile_user.description}}</p>
+        {% endif %}
+        {% if not following %}
+        <form action='{% url 'soundspace:follow' %}' method='POST'>
+          {% csrf_token %}
+          <input hidden name='followerid' value='{{request.session.user_id}}'>
+          <input hidden name='followingid' value='{{profile_user.id}}'>
+          <input type='submit' name='follow' value='Follow'>
+        </form>
+        {% elif following %}
+          <input type='submit' value='Following'>
+          <br>
+          <form action='{% url 'soundspace:unfollow' %}' method='POST'>
+            {% csrf_token %}
+            <input hidden name='followerid' value='{{request.session.user_id}}'>
+            <input hidden name='unfollowid' value='{{profile_user.id}}'>
+            <input type='submit' name='unfollow' value='Unfollow'>
+          </form>
+        {% endif %}
+        <h4>Total Number of Followers:</h4>
+        {{num_followers}}
+        <h4>Total Number Following:</h4>
+        {{num_following}}
+        <br>
+      </div>
+    </div>
+
+    <div class="container">
+
+      <div class="row">
+        <div class="col-md-4">
+          <h3>Tracks</h3>
+          {% for song in all_songs %}
+            <h4>{{song.title}} - {{song.artist}}</h4>
+            <p>Posted by: <a href='{% url 'soundspace:user' id=song.user.id %}'>{{song.user.name}}</a> {{song.created_at|date:"M d H:i"}}</p>
+            <audio controls>
+                  <source src="" type="audio/mpeg">
+              <!-- <source src="{% static 'media/' %}{{song.song}}" type="audio/mpeg"> -->
+            </audio>
+            <form action="{% url 'soundspace:addcomment' %}" method="post">
+              {% csrf_token %}
+              {{commentForm.as_p}}
+              <input hidden name='song_id' value='{{song.id}}'>
+              <input type="submit" value="Comment" />
+            </form>
+
+              {% for comment in comments %}
+                {% if comment.song.id == song.id %}
+                <div class="comment">
+                  <a href='{% url 'soundspace:user' id=comment.user.id %}'><p>{{comment.user.name}}</a> at {{comment.created_at|date:"M d H:i"}}</p>
+                  <p>{{comment.comment}}</p>
+                </div>
+                <form action="{% url 'soundspace:deletecomment' %}" method="post">
+                  {% csrf_token %}
+                  <input hidden name='comment_id' value='{{comment.id}}'>
+                  <input type="submit" value="Delete Comment" />
+                </form>
+                {% endif %}
+              {% endfor %}
+              {% endfor %}
+        </div>
+        <div class="col-md-4">
+          <h3>Playlists:</h3>
+          <p>**Profile image of 10 followers goes here**<p>
+          <p>**Profile image of most recent 3 following goes here**</p>
+          <p>Link for user to follow this same person</p>
+            <p>Profile image of most recent 3 following</p>
+        </div>
+        <div class="col-md-4">
+          <h3>Reposts:</h3>
+        </div>
+      </div>
+
+      <hr>
+
+      <footer>
+
+      </footer>
+    </div>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+    <script>window.jQuery || document.write('<script src="{% static 'soundcloud/js/jquery.min.js' %}"><\/script>')</script>
+    <script src="{% static 'soundcloud/js/bootstrap.min.js'%}"></script>
+    <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
+    <script src="{% static 'soundcloud/js/ie10-viewport-bug-workaround.js'%}"></script>
   </body>
 </html>

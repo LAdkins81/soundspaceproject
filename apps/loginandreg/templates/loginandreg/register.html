@@ -58,6 +58,11 @@
     <div class="container">
 
       <div class="starter-template">
+        {% if messages %}
+          {% for m in messages %}
+            <div id="messages">{{m}}</div>
+          {% endfor %}
+        {% endif %}
         <p>If you have an account, sign in <a href='{% url 'loginandreg:login' %}'>here.</a></p>
         <form action='{% url 'loginandreg:register_user' %}' method='POST'>
           {% csrf_token %}

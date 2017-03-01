@@ -15,11 +15,12 @@ class UserManager(models.Manager):
     def login(self, object):
         email = object['email']
         password = object['password']
-        user = User.objects.get(email=email)
-        pw_hash = bcrypt.hashpw(password.encode(), user.password.encode())
-        if pw_hash == user.password:
-            return {'username': user.name, 'uid': user.id}
-        else:
+        try:
+            user = User.objects.get(email=email)
+            pw_hash = bcrypt.hashpw(password.encode(), user.password.encode())
+            if pw_hash == user.password:
+                return {'username': user.name, 'uid': user.id}
+        except:
             return {'error': 'Username/Password does not match.'}
 
     def register(self, object, **kwargs):
@@ -31,7 +32,24 @@ class UserManager(models.Manager):
         pw_hash = bcrypt.hashpw(password.encode(), bcrypt.gensalt())
         User.objects.create(name=name, email=email, password=pw_hash, age=age, gender=gender)
         user = User.objects.get(email=email)
-        return {'uid': user.id}
+        return {'uid': user.id, 'user_name':user.name}
+
+    def update_user(self, info, **kwargs):
+        email = info['email']
+        password = info['password']
+        pw_hash = bcrypt.hashpw(password.encode(), bcrypt.gensalt())
+        user = User.objects.get(email=email)
+        try:
+            user.name = info['name']
+            user.gender = info['gender']
+            user.email = info['email']
+            user.password = pw_hash
+            user.age = info['age']
+            user.description = info['description']
+            user.save()
+            return {'success': 'User information has been updated!'}
+        except:
+            return {'error': 'ERROR'}
 
 class User(models.Model):
     GENDER_CHOICES = (

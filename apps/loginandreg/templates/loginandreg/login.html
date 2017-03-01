@@ -58,6 +58,11 @@
     <div class="container">
 
       <div class="starter-template">
+        {% if messages %}
+          {% for m in messages %}
+            <div id="messages">{{m}}</div>
+          {% endfor %}
+        {% endif %}
         <form action='{% url 'loginandreg:login_user' %}' method='POST'>
           {% csrf_token %}
           {{loginForm.as_p}}

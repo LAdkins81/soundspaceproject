@@ -46,6 +46,7 @@
           <a class="navbar-brand" href="{% url 'loginandreg:homepage' %}"><img src='{% static 'loginandreg/image/soundspace.png' %}'></a>
           <a class="navbar-brand" href="{% url 'soundspace:stream' %}">Home</a>
           <a class="navbar-brand" href="{% url 'upload:index' %}">Uploads</a>
+          <a class="navbar-brand" href="{% url 'soundspace:user' id=request.session.user_id %}">{{request.session.username}}</a>
         </div>
         <div id="navbar" class="navbar-collapse collapse">
           <!-- <a href='{% url 'upload:index' %}'><button class="navbar-right">Uploads</button></a> -->
@@ -69,55 +70,51 @@
     <div class="jumbotron">
       <div class="container">
         <h2>Hello, {{request.session.username}}</h2>
-        <a href="{% url 'soundspace:update' id=request.session.user_id %}">Edit your account!</a><br>
-        <h4> Here are some new users!:</h4>
-        {% for user in users %}
-        <a href="{% url 'soundspace:user' id=user.id %}">{{user.name}}</a><br>
-        <h2>Hello, {{request.session.username}}</h2>
-        {% for song in all_songs %}
-          <h4>{{song.title}} - {{song.artist}}</h4>
-          <audio controls>
-            <source src="" type="audio/mpeg">
-          </audio>
-          <div class="commentbox">
-            {% for comment in comments %}
-              {% if comment.song.id == song.id %}
-              <div class="comment">
-                <a href=''><p>{{comment.user.name}}</a> at {{comment.created_at|date:"M d H:i"}}</p>
-                <p>{{comment.comment}}</p>
-                <form action="{% url 'soundspace:deletecomment' %}" method="post">
-                  {% csrf_token %}
-                  <input hidden name='comment_id' value='{{comment.id}}'>
-                  <input type="submit" value="Delete Comment" />
-                </form>
-              </div>
-              {% endif %}
-            {% endfor %}
-
-            <form action="{% url 'soundspace:addcomment' %}" method="post">
-              {% csrf_token %}
-              {{commentForm.as_p}}
-            <input hidden name='song_id' value='{{song.id}}'>
-            <input type="submit" value="Comment" />
-            </form>
-          </div>
-        {% endfor %}
+        <a href="{% url 'soundspace:update_profile' id=request.session.user_id %}">Edit your account!</a><br>
+        <h4> Here are some new users:</h4>
       </div>
     </div>
 
     <div class="container">
-      <!-- Example row of columns -->
+      <div class="feed">
+      {% for song in all_songs %}
+        <h4>{{song.title}} - {{song.artist}}</h4>
+        <p>Posted by: <a href='{% url 'soundspace:user' id=song.user.id %}'>{{song.user.name}}</a> {{song.created_at|date:"M d H:i"}}</p>
+        <audio controls>
+              <source src="" type="audio/mpeg">
+          <!-- <source src="{% static 'media/' %}{{song.song}}" type="audio/mpeg"> -->
+        </audio>
+        <form action="{% url 'soundspace:addcomment' %}" method="post">
+          {% csrf_token %}
+          {{commentForm.as_p}}
+          <input hidden name='song_id' value='{{song.id}}'>
+          <input type="submit" value="Comment" />
+        </form>
+
+          {% for comment in comments %}
+            {% if comment.song.id == song.id %}
+            <div class="comment">
+              <a href='{% url 'soundspace:user' id=comment.user.id %}'><p>{{comment.user.name}}</a> at {{comment.created_at|date:"M d H:i"}}</p>
+              <p>{{comment.comment}}</p>
+            </div>
+            <form action="{% url 'soundspace:deletecomment' %}" method="post">
+              {% csrf_token %}
+              <input hidden name='comment_id' value='{{comment.id}}'>
+              <input type="submit" value="Delete Comment" />
+            </form>
+            {% endif %}
+          {% endfor %}
+        {% endfor %}
+        </div>
+
       <div class="row">
         <div class="col-md-4">
-          <h2></h2>
 
         </div>
         <div class="col-md-4">
-          <h2></h2>
 
        </div>
         <div class="col-md-4">
-          <h2></h2>
 
         </div>
       </div>

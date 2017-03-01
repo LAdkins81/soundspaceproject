@@ -1,7 +1,9 @@
 from __future__ import unicode_literals
 from django.db import models
+from ..loginandreg.models import User
 
 class Song(models.Model):
+    user = models.ForeignKey(User, null=True)
     description = models.TextField(max_length=255, blank=True)
     genre = models.CharField(max_length=45)
     title = models.CharField(max_length=45)

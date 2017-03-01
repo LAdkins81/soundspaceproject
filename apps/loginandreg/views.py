@@ -5,18 +5,24 @@ from .forms import RegisterForm, LoginForm
 from .models import User
 
 def index(request):
+    if 'user_id' in request.session:
+        return redirect(reverse('soundspace:stream'))
     return render(request, 'loginandreg/index.html')
 
 def login(request):
     context = {
         'loginForm': LoginForm()
     }
+    if 'user_id' in request.session:
+        return redirect(reverse('soundspace:stream'))
     return render(request, 'loginandreg/login.html', context)
 
 def register(request):
     context = {
         'regForm': RegisterForm()
     }
+    if 'user_id' in request.session:
+        return redirect(reverse('soundspace:stream'))
     return render(request, 'loginandreg/register.html', context)
 
 def register_user(request):
@@ -25,12 +31,11 @@ def register_user(request):
         messages.add_message(request, messages.ERROR, regForm.errors)
         if regForm.is_valid():
             response = User.objects.register(request.POST)
-            request.session['username'] = request.POST['name']
+            request.session['username'] = response['user_name']
             request.session['user_id'] = response['uid']
             return redirect(reverse('soundspace:stream'))
         else:
             return redirect(reverse('loginandreg:register'))
-    return redirect(reverse('soundspace:stream'))
 
 def login_user(request):
     if request.method == 'POST':
