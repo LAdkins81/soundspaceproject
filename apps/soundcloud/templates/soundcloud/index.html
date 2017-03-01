@@ -70,6 +70,11 @@
       <div class="container">
         <h2>Hello, {{request.session.username}}</h2>
         <a href="{% url 'soundspace:update' id=request.session.user_id %}">Edit your account!</a><br>
+        <form method="get" action="{% url 'soundspace:search' %}">
+          <label for="id_q">Search:</label>
+          <input type="text" name="q" id="id_q"/>
+          <input type="submit" value="Submit"/>
+        </form>
         <h4> Here are some new users!:</h4>
         {% for user in users %}
         <a href="{% url 'soundspace:user' id=user.id %}">{{user.name}}</a><br>
@@ -91,7 +96,8 @@
                   <input type="submit" value="Delete Comment" />
                 </form>
               </div>
-              {% endif %}
+                {% endif %}
+              {% endfor %}
             {% endfor %}
 
             <form action="{% url 'soundspace:addcomment' %}" method="post">

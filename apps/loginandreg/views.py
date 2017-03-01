@@ -5,6 +5,8 @@ from .forms import RegisterForm, LoginForm
 from .models import User
 
 def index(request):
+    if 'username' in request.session:
+        return redirect(reverse('soundspace:stream'))
     return render(request, 'loginandreg/index.html')
 
 def login(request):

@@ -4,6 +4,13 @@ from ..upload.models import Song
 from ..loginandreg.models import User
 from .models import Comment
 from .forms import CommentForm
+from .utils import *
+
+QUERY="search-query"
+
+MODEL_MAP = {
+    Song: ["title","genre","artist","description"],
+    }
 
 def index(request):
     users=User.objects.all()
@@ -70,3 +77,16 @@ def delete_comment(request):
     if request.method == 'POST':
         Comment.objects.get(id=request.POST['comment_id']).delete()
         return redirect(reverse('soundspace:stream'))
+
+def search(request):
+    query_string = ''
+    found_entries = None
+    if ('q' in request.GET) and request.GET['q'].strip():
+        query_string = request.GET['q']
+        song_query = get_query(query_string, ['artist','description','genre','title'])
+        found_entries = Song.objects.filter(song_query).order_by('-title')
+    context={
+        'query_string': query_string,
+        'found_entries': found_entries
+    }
+    return render(request, 'soundcloud/search.html', context)
