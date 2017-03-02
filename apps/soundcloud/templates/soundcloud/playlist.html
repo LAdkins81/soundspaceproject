@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Playlist Details</title>
+  </head>
+  <body>
+    <h1>Playlist info for {{playlist.name}}</h1>
+    <h2>Name:  {{playlist.name}}</h2>
+    <h3>Genre: {{playlist.genre}}</h3>
+    <p>Description: {{playlist.description}}</p>
+    <h3>Songs:</h4>
+    {% for song in songs %}
+    <li>
+      <ol>{{song.name}}--{{song.artist}}</ol>
+    </li>
+    <form class="" action="{% url 'upload:delete_playlist_song' id=song.id %}" method="post">
+      <input type="hidden" name="playlist_id" value="{{playlist.id}}">
+      {% csrf_token %}
+      <input type="submit" name="" value="Delete this Song from Playlist">
+    </form>
+    {% endfor %}
+  </body>
+</html>

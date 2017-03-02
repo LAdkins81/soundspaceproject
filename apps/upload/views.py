@@ -31,3 +31,51 @@ def create(request):
         new.tags.add(tag)
     messages.warning(request, "Thanks for your contribution!")
     return redirect(reverse('upload:index'))
+
+def add_playlist(request, id):
+
+    song=Song.objects.get(id=id)
+    try:
+        user= User.objects.get(id=request.session['user_id'])
+        playlist= user.user_playlists.get(id=request.POST['playlist_id'])
+
+        playlist.songs.add(song)
+
+        return redirect(reverse('soundspace:user', kwargs={'id':request.session['user_id']}))
+    except:
+        return redirect(reverse('soundspace:user', kwargs={'id':request.session['user_id']}))
+
+def create_playlist(request):
+    user = User.objects.get(id=request.session['user_id'])
+    Playlist.objects.create(name=request.POST['name'], genre= request.POST['genre'], description=request.POST['description'], user=user)
+    return redirect(reverse('soundspace:user', kwargs={'id':request.session['user_id']}))
+
+def delete_playlist_song(request, id):
+    select=request.POST['playlist_id']
+    playlist = Playlist.objects.get(id=select)
+    song = Song.objects.get(id=id)
+    playlist.songs.remove(song)
+    return redirect(reverse('soundspace:user', kwargs={'id':request.session['user_id']}))
+
+def playlist_info(request, id):
+    playlist = Playlist.objects.get(id=id)
+    songs=playlist.songs.all()
+
+    context={
+        'songs':songs,
+        'playlist':playlist
+    }
+    if playlist.user_id != request.session['user_id']:
+        return redirect(reverse('soundspace:user', kwargs={'id':request.session['user_id']}))
+    return render(request, 'soundcloud/playlist.html', context)
+
+def repost(request,id):
+    try:
+        Repost.objects.get(post_id=id, user_id=request.session['user_id'])
+    except:
+        Repost.objects.create(post_id=id,user_id=request.session['user_id'])
+    return redirect(reverse('soundspace:user', kwargs={'id':request.session['user_id']}))
+
+def remove_repost(request, id):
+    user_repost= Repost.objects.get(user_id=request.session['user_id'], post_id=id).delete()
+    return redirect(reverse('soundspace:user', kwargs={'id':request.session['user_id']}))

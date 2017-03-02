@@ -1,8 +1,8 @@
 from django.shortcuts import render, redirect
 from django.core.urlresolvers import reverse
-from ..upload.models import Song
-from ..loginandreg.models import User
-from .models import Comment, Relationship
+from ..upload.models import *
+from ..loginandreg.models import *
+from .models import *
 from .forms import CommentForm, UpdateForm
 from .utils import *
 
@@ -41,22 +41,38 @@ def update_profile(request, id):
 def user(request, id):
     profile_user = User.objects.get(id=id)
     logged_on_user = User.objects.get(id=request.session['user_id'])
+    playlists= Playlist.objects.filter(user_id=id)
+    all_songs= Song.objects.filter(user=profile_user).order_by('-created_at')
+    num_followers= len(Relationship.objects.filter(following=profile_user))
+    num_following= len(Relationship.objects.filter(follower=profile_user))
+    for song in all_songs:
+        reposts = song.song_reposts.all()
+        for repost in reposts:
+            user= repost.user_id
+            if profile_user.id == user:
+                song.joined=True
+            else:
+                song.joined=False
     try:
         context = {
+            'reposts':Repost.objects.get(user_id=id),
+            'playlists':playlists,
             'profile_user': profile_user,
             'commentForm': CommentForm(),
             'following': Relationship.objects.get(following=profile_user, follower=logged_on_user),
-            'num_followers': len(Relationship.objects.filter(following=profile_user)),
-            'num_following': len(Relationship.objects.filter(follower=profile_user)),
-            'all_songs': Song.objects.filter(user=profile_user).order_by('-created_at'),
+            'num_followers': num_followers,
+            'num_following': num_following,
+            'all_songs': all_songs,
         }
     except:
         context = {
+            'reposts':reposts,
+            'playlists':playlists,
             'profile_user': profile_user,
             'commentForm': CommentForm(),
-            'num_followers': len(Relationship.objects.filter(following=profile_user)),
-            'num_following': len(Relationship.objects.filter(follower=profile_user)),
-            'all_songs': Song.objects.filter(user=profile_user).order_by('-created_at'),
+            'num_followers': num_followers,
+            'num_following': num_following,
+            'all_songs': all_songs,
         }
     return render(request, 'soundcloud/userinfo.html', context)
 

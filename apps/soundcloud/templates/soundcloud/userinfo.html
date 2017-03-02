@@ -104,7 +104,14 @@
           <h3>Tracks</h3>
           {% for song in all_songs %}
             <h4>{{song.title}} - {{song.artist}}</h4>
-            <p>Posted by: <a href='{% url 'soundspace:user' id=song.user.id %}'>{{song.user.name}}</a> {{song.created_at|date:"M d H:i"}}</p>
+            <p>Posted by: <a href='{% url 'soundspace:user' id=song.user.id %}'>{{song.user.name}}</a> {{song.created_at|date:"M d H:i"}}
+            </p>
+            {% if not song.joined %}
+            <form class="" action="{% url 'upload:repost' id=song.id %}" method="post">
+              {% csrf_token %}
+              <input type="submit" name="" value="Repost!">
+            </form>
+            {% endif %}
             <audio controls>
                   <source src="" type="audio/mpeg">
               <!-- <source src="{% static 'media/' %}{{song.song}}" type="audio/mpeg"> -->
@@ -115,7 +122,15 @@
               <input hidden name='song_id' value='{{song.id}}'>
               <input type="submit" value="Comment" />
             </form>
-
+            <form class="" action="{% url 'upload:add_playlist' id=song.id %}" method="post">
+              {% csrf_token %}
+              <select class="" name="playlist_id">
+                {% for playlist in playlists %}
+                <option value="{{playlist.id}}">{{playlist.name}}</option>
+                {% endfor %}
+              </select>
+              <input type="submit" name="add" value="Add to Playlist!">
+            </form>
               {% for comment in comments %}
                 {% if comment.song.id == song.id %}
                 <div class="comment">
@@ -133,6 +148,20 @@
         </div>
         <div class="col-md-4">
           <h3>Playlists:</h3>
+          <form class="" action="{% url 'upload:create_playlist' %}" method="post">
+            {% csrf_token %}
+            Create a New Playlist:<br>
+            Playlist Name:<input type="text" name="name" value=""><br>
+            Genre:<input type="text" name="genre" value=""><br>
+            Description:<br>
+            <textarea name="description" rows="8" cols="80"></textarea><br>
+            <input type="submit" name="" value="Create!">
+          </form>
+          {% for playlist in playlists%}
+              <ol>
+                <li><a href="{% url 'upload:playlist_info' id=playlist.id %}">{{playlist.name}}</a>: Genre: {{playlist.genre}}, Description: {{playlist.description}} </li>
+              </ol>
+          {% endfor %}
           <p>**Profile image of 10 followers goes here**<p>
           <p>**Profile image of most recent 3 following goes here**</p>
           <p>Link for user to follow this same person</p>
@@ -140,6 +169,18 @@
         </div>
         <div class="col-md-4">
           <h3>Reposts:</h3>
+          {% for repost in reposts %}
+          {{repost.post.title}}
+          {{repost.post.artist}}
+          {{repost.post.genre}}
+          {{repost.post.description}}
+            {% if repost.user_id == request.session.user_id %}
+              <form class="" action="{% url 'upload:remove_repost' id=repost.post.id %}" method="post">
+                {% csrf_token %}
+                <input type="submit" name="" value="Unpost!">
+              </form>
+            {% endif %}
+          {% endfor %}
         </div>
       </div>
 
