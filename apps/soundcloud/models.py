@@ -27,5 +27,27 @@ class Relationship(models.Model):
     following = models.ForeignKey(User, related_name='user_following')
     follower = models.ForeignKey(User, related_name='user_followers')
     created_at = models.DateTimeField(auto_now_add=True)
-
     objects = RelationshipManager()
+
+class LikeManager(models.Manager):
+    def create_like(self, info, userid, **kwargs):
+        user = User.objects.get(id=userid)
+        song = Song.objects.get(id=info['song_id'])
+        like, created = Like.objects.get_or_create(song=song, user=user)
+        return {'success': 'Liked!'}
+
+    def unlike(self, info, userid, **kwargs):
+        user = User.objects.get(id=userid)
+        song = Song.objects.get(id=info['song_id'])
+        try:
+            Like.objects.get(song=song, user=user).delete()
+            return {'success': 'Unliked!'}
+        except:
+            pass
+
+class Like(models.Model):
+    song = models.ForeignKey(Song, related_name='liked_song')
+    user = models.ForeignKey(User, related_name='liked_user')
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    objects = LikeManager()

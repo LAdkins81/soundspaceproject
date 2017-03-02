@@ -34,6 +34,7 @@ INSTALLED_APPS = [
     'apps.upload',
     'apps.loginandreg',
     'apps.soundcloud',
+    'social_widgets',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -57,7 +58,9 @@ ROOT_URLCONF = 'soundcloud.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [
+            os.path.join(BASE_DIR, 'templates'),
+        ],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -122,5 +125,5 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 
-MEDIA_ROOT = 'apps/media/static/media'
+MEDIA_ROOT = 'apps/soundcloud/static/soundcloud'
 MEDIA_URL = '/media/'

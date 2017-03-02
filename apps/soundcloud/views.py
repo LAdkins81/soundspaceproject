@@ -13,12 +13,17 @@ MODEL_MAP = {
     }
 
 def index(request):
-    users=User.objects.all()
+    logged_on_user = User.objects.get(id=request.session['user_id'])
+    likes = Like.objects.filter(user=logged_on_user)
+    user_likes = {}
+    for l in likes:
+        if l.user_id == request.session['user_id']:
+            user_likes[l.song_id] = True
     context = {
-        'users':users,
+        'commentForm': CommentForm(),
         'all_songs': Song.objects.all().order_by('-created_at'),
         'comments': Comment.objects.all(),
-        'commentForm': CommentForm(),
+        'user_liked': user_likes,
     }
     return render(request, 'soundcloud/index.html', context)
 
@@ -27,16 +32,19 @@ def logout(request):
         request.session.clear()
     return redirect(reverse('loginandreg:homepage'))
 
-def update_profile(request, id):
-    user = User.objects.get(id=id)
-    context={
-        'user':user,
-        'updateForm': UpdateForm(),
+def song(request, id):
+    logged_on_user = User.objects.get(id=request.session['user_id'])
+    likes = Like.objects.filter(user=logged_on_user)
+    user_likes = {}
+    for l in likes:
+        if l.user_id == request.session['user_id']:
+            user_likes[l.song_id] = True
+    context = {
+        'commentForm': CommentForm(),
+        'song': Song.objects.get(id=id),
+        'user_liked': user_likes,
     }
-    if request.method == 'POST':
-        User.objects.update_user(request.POST)
-        return redirect(reverse('soundspace:stream'))
-    return render(request, 'soundcloud/user.html', context)
+    return render(request, 'soundcloud/song.html', context)
 
 def user(request, id):
     profile_user = User.objects.get(id=id)
@@ -53,6 +61,12 @@ def user(request, id):
                 song.joined=True
             else:
                 song.joined=False
+
+    likes = Like.objects.filter(user=logged_on_user)
+    user_likes = {}
+    for l in likes:
+        if l.user_id == request.session['user_id']:
+            user_likes[l.song_id] = True
     try:
         context = {
             'reposts':Repost.objects.get(user_id=id),
@@ -63,6 +77,7 @@ def user(request, id):
             'num_followers': num_followers,
             'num_following': num_following,
             'all_songs': all_songs,
+            'user_liked': user_likes,
         }
     except:
         context = {
@@ -73,8 +88,21 @@ def user(request, id):
             'num_followers': num_followers,
             'num_following': num_following,
             'all_songs': all_songs,
+            'user_liked': user_likes,
         }
     return render(request, 'soundcloud/userinfo.html', context)
+
+
+def update_profile(request, id):
+    user = User.objects.get(id=id)
+    context={
+        'user':user,
+        'updateForm': UpdateForm(),
+    }
+    if request.method == 'POST':
+        User.objects.update_user(request.POST)
+        return redirect(reverse('soundspace:stream'))
+    return render(request, 'soundcloud/user.html', context)
 
 def create_comment(request):
     if request.method == 'POST':
@@ -99,6 +127,18 @@ def unfollow(request):
         profile_user_id = request.POST['unfollowid']
         response = Relationship.objects.unfollow(request.POST)
         return redirect(reverse('soundspace:user', kwargs={'id':profile_user_id}))
+
+def like(request):
+    if request.method == 'POST':
+        user_id = request.session['user_id']
+        Like.objects.create_like(request.POST, user_id)
+        return redirect(reverse('soundspace:stream'))
+
+def unlike(request):
+    if request.method == 'POST':
+        user_id = request.session['user_id']
+        Like.objects.unlike(request.POST, user_id)
+        return redirect(reverse('soundspace:stream'))
 
 def search(request):
     query_string = ''
