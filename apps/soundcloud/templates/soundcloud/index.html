@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 {% load static %}
+{% load social_widgets %}
 <html lang="en">
   <head>
     <meta charset="utf-8">
@@ -33,7 +34,16 @@
   </head>
 
   <body>
-
+    <div id="fb-root"></div>
+    <script>
+      (function(d, s, id) {
+      var js, fjs = d.getElementsByTagName(s)[0];
+      if (d.getElementById(id)) return;
+      js = d.createElement(s); js.id = id;
+      js.src = "//connect.facebook.net/en_US/sdk.js#xfbml=1&version=v2.8";
+      fjs.parentNode.insertBefore(js, fjs);
+      }(document, 'script', 'facebook-jssdk'));
+    </script>
     <nav class="navbar navbar-light bg-faded navbar-fixed-top" style="background-color: #d3d3d3;">
       <div class="container">
         <div class="navbar-header">
@@ -47,18 +57,18 @@
           <a class="navbar-brand" href="{% url 'soundspace:stream' %}">Home</a>
           <a class="navbar-brand" href="{% url 'upload:index' %}">Uploads</a>
           <a class="navbar-brand" href="{% url 'soundspace:user' id=request.session.user_id %}">{{request.session.username}}</a>
+          <a class="navbar-brand">
+            <form method="get" action="{% url 'soundspace:search' %}">
+              <label for="id_q">Search:</label>
+              <input type="text" name="q" id="id_q"/>
+              <input class='search' type="submit" value="Submit"/>
+            </form>
+          </a>
+
         </div>
         <div id="navbar" class="navbar-collapse collapse">
-          <!-- <a href='{% url 'upload:index' %}'><button class="navbar-right">Uploads</button></a> -->
           <form class="navbar-form navbar-right" action='{% url 'soundspace:logout' %}' method='POST'>
             {% csrf_token %}
-            <!-- <div class="form-group"> -->
-              <!-- <input type="text" placeholder="Email" class="form-control"> -->
-            <!-- </div> -->
-            <!-- <div class="form-group"> -->
-              <!-- <input type="password" placeholder="Password" class="form-control"> -->
-            <!-- </div> -->
-
             <button type="submit" class="btn btn-success">Sign Out</button>
           </form>
 
@@ -72,56 +82,34 @@
         <h2>Hello, {{request.session.username}}</h2>
         <a href="{% url 'soundspace:update_profile' id=request.session.user_id %}">Edit your account!</a><br>
         <h4> Here are some new users:</h4>
-        <form method="get" action="{% url 'soundspace:search' %}">
-          <label for="id_q">Search:</label>
-          <input type="text" name="q" id="id_q"/>
-          <input type="submit" value="Submit"/>
-        </form>
-        <h4> Here are some new users!:</h4>
-        {% for user in users %}
-        <a href="{% url 'soundspace:user' id=user.id %}">{{user.name}}</a><br>
-        <h2>Hello, {{request.session.username}}</h2>
-        {% for song in all_songs %}
-          <h4>{{song.title}} - {{song.artist}}</h4>
-          <audio controls>
-            <source src="" type="audio/mpeg">
-          </audio>
-          <div class="commentbox">
-            {% for comment in comments %}
-              {% if comment.song.id == song.id %}
-              <div class="comment">
-                <a href=''><p>{{comment.user.name}}</a> at {{comment.created_at|date:"M d H:i"}}</p>
-                <p>{{comment.comment}}</p>
-                <form action="{% url 'soundspace:deletecomment' %}" method="post">
-                  {% csrf_token %}
-                  <input hidden name='comment_id' value='{{comment.id}}'>
-                  <input type="submit" value="Delete Comment" />
-                </form>
-              </div>
-                {% endif %}
-              {% endfor %}
-            {% endfor %}
 
-            <form action="{% url 'soundspace:addcomment' %}" method="post">
-              {% csrf_token %}
-              {{commentForm.as_p}}
-            <input hidden name='song_id' value='{{song.id}}'>
-            <input type="submit" value="Comment" />
-            </form>
-          </div>
-        {% endfor %}
       </div>
     </div>
 
     <div class="container">
       <div class="feed">
       {% for song in all_songs %}
-        <h4>{{song.title}} - {{song.artist}}</h4>
+        <h4><a href='{% url 'soundspace:song' id=song.id %}'>{{song.title}} - {{song.artist}}</a></h4>
         <p>Posted by: <a href='{% url 'soundspace:user' id=song.user.id %}'>{{song.user.name}}</a> {{song.created_at|date:"M d H:i"}}</p>
-        <audio controls>
-              <source src="" type="audio/mpeg">
-          <!-- <source src="{% static 'media/' %}{{song.song}}" type="audio/mpeg"> -->
+        <audio controls src="{% static 'soundcloud/' %}{{song.song}}">
         </audio>
+        <br>
+          {% if song.id in user_liked %}
+          <form action="{% url 'soundspace:unlike' %}" method="post">
+          {% csrf_token %}
+            <input hidden name='song_id' value='{{song.id}}'>
+            <input class='unlike'type="submit" value="Unlike" />
+            <br>
+          </form>
+          {% else %}
+          <form action="{% url 'soundspace:like' %}" method="post">
+            {% csrf_token %}
+            <input hidden name='song_id' value='{{song.id}}'>
+            <input type="submit" value="Like" />
+            <br>
+          </form>
+          {% endif %}
+        <br>
         <form action="{% url 'soundspace:addcomment' %}" method="post">
           {% csrf_token %}
           {{commentForm.as_p}}
@@ -134,14 +122,18 @@
             <div class="comment">
               <a href='{% url 'soundspace:user' id=comment.user.id %}'><p>{{comment.user.name}}</a> at {{comment.created_at|date:"M d H:i"}}</p>
               <p>{{comment.comment}}</p>
+              {% if comment.user.id == request.session.user_id %}
+              <form action="{% url 'soundspace:deletecomment' %}" method="post">
+                {% csrf_token %}
+                <input hidden name='comment_id' value='{{comment.id}}'>
+                <input type="submit" value="Delete Comment" />
+              </form>
+              {% endif %}
             </div>
-            <form action="{% url 'soundspace:deletecomment' %}" method="post">
-              {% csrf_token %}
-              <input hidden name='comment_id' value='{{comment.id}}'>
-              <input type="submit" value="Delete Comment" />
-            </form>
             {% endif %}
           {% endfor %}
+          {% social_widget_render "twitter/share_button.html" href="" %}<br>
+          <div class="fb-share-button" data-href="https://developers.facebook.com/docs/plugins/" data-layout="button" data-size="small" data-mobile-iframe="true"><a class="fb-xfbml-parse-ignore" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Fdevelopers.facebook.com%2Fdocs%2Fplugins%2F&amp;src=sdkpreparse">Share</a></div>
         {% endfor %}
         </div>
 
