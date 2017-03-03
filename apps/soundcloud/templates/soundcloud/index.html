@@ -58,12 +58,12 @@
             </form>
           </a>
 
-            <a class="dropdown-toggle" type="button" data-toggle="dropdown"> {{request.session.username}}
-            <span class="caret"></span></a>
-            <ul class="dropdown-menu">
-              <li><a href="{% url 'soundspace:update_profile' id=request.session.user_id %}">Edit Profile</a></li>
-              <li><a href="{% url 'soundspace:user' id=request.session.user_id %}">Profile</a></li>
-            </ul>
+          <a class="navbar-brand dropdown-toggle" type="button" data-toggle="dropdown"> {{request.session.username}}
+          <span class="caret"></span></a>
+          <ul class="dropdown-menu">
+            <li><a href="{% url 'soundspace:update_profile' id=request.session.user_id %}">Edit Profile</a></li>
+            <li><a href="{% url 'soundspace:user' id=request.session.user_id %}">Profile</a></li>
+          </ul>
         </div>
         <div id="navbar" class="navbar-collapse collapse">
           <form class="navbar-form navbar-right" action='{% url 'soundspace:logout' %}' method='POST'>
