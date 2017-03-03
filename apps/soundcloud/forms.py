@@ -20,10 +20,12 @@ class UpdateForm(forms.Form):
             ('F', 'Female'),
             ('O', 'Other')
         )
+
     name = forms.CharField(required=False, max_length=45)
     picture = forms.FileField(required=False)
-    email = forms.CharField(required=True)
+    email = forms.CharField(required=False)
     age = forms.IntegerField(required=False)
     gender = forms.ChoiceField(required=False, choices=GENDER_CHOICES)
     description = forms.CharField(required=False, widget=forms.Textarea(attrs={'rows': 2, 'cols': 20}))
-    password = forms.CharField(required=True, widget=forms.PasswordInput())
+    new_password = forms.CharField(required=False, widget=forms.PasswordInput())
+    confirm_current_password = forms.CharField(required=True, widget=forms.PasswordInput())

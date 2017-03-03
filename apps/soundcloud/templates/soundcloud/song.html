@@ -79,8 +79,7 @@
           </button>
           <a class="navbar-brand" href="{% url 'loginandreg:homepage' %}"><img src='{% static 'loginandreg/image/soundspace.png' %}'></a>
           <a class="navbar-brand" href="{% url 'soundspace:stream' %}">Home</a>
-          <a class="navbar-brand" href="{% url 'upload:index' %}">Uploads</a>
-          <a class="navbar-brand" href="{% url 'soundspace:user' id=request.session.user_id %}">{{request.session.username}}</a>
+          <a class="navbar-brand" href="{% url 'upload:index' %}">Upload a Song!</a>
           <a class="navbar-brand">
             <form method="get" action="{% url 'soundspace:search' %}">
               <label for="id_q">Search:</label>
@@ -88,7 +87,14 @@
               <input class='search' type="submit" value="Submit"/>
             </form>
           </a>
-
+        </div>
+        <div class="dropdown">
+          <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">{{request.session.username}}
+          <span class="caret"></span></button>
+          <ul class="dropdown-menu">
+            <li><a href="{% url 'soundspace:update_profile' id=request.session.user_id %}">Edit Your Account!</a></li>
+            <li><a href="{% url 'soundspace:user' id=request.session.user_id %}">Your Profile Page!</a></li>
+          </ul>
         </div>
         <div id="navbar" class="navbar-collapse collapse">
           <form class="navbar-form navbar-right" action='{% url 'soundspace:logout' %}' method='POST'>

@@ -41,9 +41,13 @@ def add_playlist(request, id):
 
         playlist.songs.add(song)
 
-        return redirect(reverse('soundspace:user', kwargs={'id':request.session['user_id']}))
+        return redirect(reverse('upload:playlist_info', kwargs={'id':request.POST['playlist_id']}))
     except:
-        return redirect(reverse('soundspace:user', kwargs={'id':request.session['user_id']}))
+        playlist_id = request.POST.get('playlist_id', False)
+        if playlist_id == False:
+            messages.warning(request, "**Please create a playlist to add to!**")
+            return redirect(reverse('soundspace:user', kwargs={'id':request.session['user_id']}))
+        return redirect(reverse('upload:playlist_info', kwargs={'id':request.POST['playlist_id']}))
 
 def create_playlist(request):
     user = User.objects.get(id=request.session['user_id'])

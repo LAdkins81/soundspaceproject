@@ -14,4 +14,5 @@ urlpatterns = [
     url(r'^stream/deletecomment$', delete_comment, name='deletecomment'),
     url(r'^like$', like, name='like'),
     url(r'^unlike$', unlike, name='unlike'),
+    url(r'^artist_info/(?P<name>[\w.@+-]+)$', artist_info, name='artist_info'),
 ]

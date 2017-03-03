@@ -47,6 +47,15 @@
     <nav class="navbar navbar-light bg-faded navbar-fixed-top" style="background-color: #d3d3d3;">
       <div class="container">
         <div class="navbar-header">
+          <div class="dropdown">
+            <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown"> {{request.session.username}}
+            <span class="caret"></span></button>
+            <ul class="dropdown-menu">
+              <li><a href="{% url 'soundspace:update_profile' id=request.session.user_id %}">Edit Your Account!</a></li>
+              <li><a href="{% url 'soundspace:user' id=request.session.user_id %}">Your Profile Page!</a></li>
+            </ul>
+          </div>
+
           <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
             <span class="sr-only">Toggle navigation</span>
             <span class="icon-bar"></span>
@@ -55,8 +64,7 @@
           </button>
           <a class="navbar-brand" href="{% url 'loginandreg:homepage' %}"><img src='{% static 'loginandreg/image/soundspace.png' %}'></a>
           <a class="navbar-brand" href="{% url 'soundspace:stream' %}">Home</a>
-          <a class="navbar-brand" href="{% url 'upload:index' %}">Uploads</a>
-          <a class="navbar-brand" href="{% url 'soundspace:user' id=request.session.user_id %}">{{request.session.username}}</a>
+          <a class="navbar-brand" href="{% url 'upload:index' %}">Upload a Song</a>
           <a class="navbar-brand">
             <form method="get" action="{% url 'soundspace:search' %}">
               <label for="id_q">Search:</label>
@@ -64,13 +72,13 @@
               <input class='search' type="submit" value="Submit"/>
             </form>
           </a>
-
         </div>
         <div id="navbar" class="navbar-collapse collapse">
           <form class="navbar-form navbar-right" action='{% url 'soundspace:logout' %}' method='POST'>
             {% csrf_token %}
             <button type="submit" class="btn btn-success">Sign Out</button>
           </form>
+
 
         </div><!--/.navbar-collapse -->
       </div>
@@ -79,16 +87,16 @@
     <!-- Main jumbotron for a primary marketing message or call to action -->
     <div class="jumbotron">
       <div class="container">
-        <h2>Hello, {{request.session.username}}</h2>
-        <a href="{% url 'soundspace:update_profile' id=request.session.user_id %}">Edit your account!</a><br>
-        <h4> Here are some new users:</h4>
+        <br>
+        <h2>Hello, {{request.session.username}}!</h2>
       </div>
     </div>
 
     <div class="container">
       <div class="feed">
+        <h3>Most Recently Uploaded Songs!</h3>
       {% for song in all_songs %}
-        <h4><a href='{% url 'soundspace:song' id=song.id %}'>{{song.title}} - {{song.artist}}</a></h4>
+        <h4><a href='{% url 'soundspace:song' id=song.id %}'>{{song.title}}</a> - <a href="{% url 'soundspace:artist_info' name=song.artist %}">{{song.artist}}</a></h4>
         <p>Posted by: <a href='{% url 'soundspace:user' id=song.user.id %}'>{{song.user.name}}</a> {{song.created_at|date:"M d H:i"}}</p>
         <audio controls src="{% static 'soundcloud/' %}{{song.song}}">
         </audio>
@@ -109,6 +117,15 @@
           </form>
           {% endif %}
         <br>
+        <form class="" action="{% url 'upload:add_playlist' id=song.id %}" method="post">
+          {% csrf_token %}
+          <select class="" name="playlist_id">
+            {% for playlist in playlists %}
+            <option value="{{playlist.id}}">{{playlist.name}}</option>
+            {% endfor %}
+          </select>
+          <input type="submit" name="add" value="Add to Playlist!">
+        </form><br>
         <form action="{% url 'soundspace:addcomment' %}" method="post">
           {% csrf_token %}
           {{commentForm.as_p}}
