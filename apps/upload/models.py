@@ -9,7 +9,7 @@ class Song(models.Model):
     title = models.CharField(max_length=45)
     artist = models.CharField(max_length=45)
     tags = models.ManyToManyField('Tag', related_name='songs', blank=True)
-    image = models.FileField(upload_to='album_images', max_length=45, null=True)
+    cover_image = models.FileField(upload_to='album_images', default='images/nosong.png', null=False)
     song = models.FileField(upload_to='songs')
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)

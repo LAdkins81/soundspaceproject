@@ -1,7 +1,19 @@
 from django import forms
 from ..loginandreg.models import User
+from ..upload.models import *
 from .models import Comment
 from django.utils.translation import ugettext_lazy as _
+
+class PlaylistForm(forms.ModelForm):
+    class Meta:
+        model = Playlist
+        fields = ['name', 'genre', 'description']
+        widgets = {
+            'description': forms.Textarea(attrs={'rows': 1, 'cols': 20})
+          }
+        labels = {
+            'comment':_(''),
+        }
 
 class CommentForm(forms.ModelForm):
     class Meta:
@@ -16,6 +28,7 @@ class CommentForm(forms.ModelForm):
 
 class UpdateForm(forms.Form):
     GENDER_CHOICES = (
+            ('', '--------'),
             ('M', 'Male'),
             ('F', 'Female'),
             ('O', 'Other')

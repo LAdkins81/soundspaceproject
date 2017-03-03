@@ -1,14 +1,12 @@
 from django import forms
 from .models import User
+from django.core.exceptions import ValidationError 
 from django.utils.translation import ugettext_lazy as _
 
 class RegisterForm(forms.ModelForm):
     class Meta:
         model = User
         fields = ['name', 'email', 'age', 'gender']
-        labels = {
-            'image':_('Profile Picture'),
-        }
     password = forms.CharField(min_length=8, max_length=100, widget=forms.PasswordInput)
     confirm_password = forms.CharField(min_length=8, max_length=100, widget=forms.PasswordInput)
 

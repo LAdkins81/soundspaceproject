@@ -1,6 +1,7 @@
 from __future__ import unicode_literals
 from django.db import models
 from django.contrib import messages
+from django.core.files.storage import FileSystemStorage
 from django.core.exceptions import ValidationError
 from django.core.validators import RegexValidator
 import bcrypt
@@ -35,7 +36,6 @@ class UserManager(models.Manager):
         return {'uid': user.id, 'user_name':user.name}
 
     def update_user(self, info, files, **kwargs):
-
         confirm = info['confirm_current_password']
         new_password = info['new_password']
         new_pw_hash = bcrypt.hashpw(new_password.encode(), bcrypt.gensalt())
@@ -70,7 +70,7 @@ class User(models.Model):
     email = models.EmailField(null=True)
     password = models.CharField(max_length=100)
     age = models.IntegerField(null=True)
-    image = models.FileField(upload_to='profileimage', null=True)
+    image = models.FileField(upload_to='profileimage', default='profileimage/default-profile-picture.jpeg')
     description= models.TextField(max_length=2000, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
