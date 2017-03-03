@@ -49,8 +49,7 @@
           </button>
           <a class="navbar-brand" href="{% url 'loginandreg:homepage' %}"><img src='{% static 'loginandreg/image/soundspace.png' %}'></a>
           <a class="navbar-brand" href="{% url 'soundspace:stream' %}">Home</a>
-          <a class="navbar-brand" href="{% url 'upload:index' %}">Uploads</a>
-          <a class="navbar-brand" href="{% url 'soundspace:user' id=request.session.user_id %}">{{request.session.username}}</a>
+          <a class="navbar-brand" href="{% url 'upload:index' %}">Upload a Song</a>
           <a class="navbar-brand">
             <form method="get" action="{% url 'soundspace:search' %}">
               <label for="id_q">Search:</label>
@@ -59,12 +58,19 @@
             </form>
           </a>
 
+            <a class="dropdown-toggle" type="button" data-toggle="dropdown"> {{request.session.username}}
+            <span class="caret"></span></a>
+            <ul class="dropdown-menu">
+              <li><a href="{% url 'soundspace:update_profile' id=request.session.user_id %}">Edit Profile</a></li>
+              <li><a href="{% url 'soundspace:user' id=request.session.user_id %}">Profile</a></li>
+            </ul>
         </div>
         <div id="navbar" class="navbar-collapse collapse">
           <form class="navbar-form navbar-right" action='{% url 'soundspace:logout' %}' method='POST'>
             {% csrf_token %}
             <button type="submit" class="btn btn-success">Sign Out</button>
           </form>
+
 
         </div><!--/.navbar-collapse -->
       </div>
@@ -73,13 +79,13 @@
     <!-- Main jumbotron for a primary marketing message or call to action -->
     <div class="jumbotron">
       <div class="container">
-        <h2>Hello, {{request.session.username}}</h2>
-        <a href="{% url 'soundspace:update_profile' id=request.session.user_id %}">Edit your account!</a><br>
-        <h4> Here are some new users:</h4>
+        <br>
+        <h2>Hello, {{request.session.username}}!</h2>
       </div>
     </div>
 
     <div class="container">
+        <h3>Most Recently Uploaded Songs!</h3>
         {% for song in all_songs %}
         <div class='song-image'>
           <img class='song-cover' src='{% static 'soundcloud/' %}{{song.cover_image}}' alt='Song Cover'>

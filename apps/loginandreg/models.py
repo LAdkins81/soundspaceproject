@@ -36,23 +36,28 @@ class UserManager(models.Manager):
         return {'uid': user.id, 'user_name':user.name}
 
     def update_user(self, info, files, **kwargs):
-        email = info['email']
-        password = info['password']
-        pw_hash = bcrypt.hashpw(password.encode(), bcrypt.gensalt())
-        user = User.objects.get(email=email)
+        confirm = info['confirm_current_password']
+        new_password = info['new_password']
+        new_pw_hash = bcrypt.hashpw(new_password.encode(), bcrypt.gensalt())
+        user = User.objects.get(id=info['updateid'])
+
         try:
-            user.name = info['name']
-            user.gender = info['gender']
-            user.email = info['email']
-            user.image = files['picture']
-            user.password = pw_hash
-            user.age = info['age']
-            user.description = info['description']
-            user.save()
-            request.session['username'] = info['name']
-            return {'success': 'User information has been updated!'}
+            pw_hash = bcrypt.hashpw(confirm.encode(), user.password.encode())
+            if pw_hash == user.password:
+                try:
+                    user.name = info['name']
+                    user.gender = info['gender']
+                    user.email = info['email']
+                    user.password = new_pw_hash
+                    user.age = info['age']
+                    user.image= files['picture']
+                    user.description = info['description']
+                    user.save()
+                    return {'success': 'User information has been updated!'}
+                except:
+                    return {'error': 'ERROR'}
         except:
-            return {'error': 'ERROR'}
+            return {'error': 'Username/Password does not match.'}
 
 class User(models.Model):
     GENDER_CHOICES = (
@@ -62,7 +67,7 @@ class User(models.Model):
         )
     name = models.CharField(max_length=55, validators=[validateLengthGreaterThanTwo, onlyLetters])
     gender = models.CharField(max_length=1, choices=GENDER_CHOICES)
-    email = models.EmailField(unique=True)
+    email = models.EmailField(null=True)
     password = models.CharField(max_length=100)
     age = models.IntegerField(null=True)
     image = models.FileField(upload_to='profileimage', default='profileimage/default-profile-picture.jpeg')

@@ -50,7 +50,7 @@
           </button>
           <a class="navbar-brand" href="{% url 'loginandreg:homepage' %}"><img src='{% static 'loginandreg/image/soundspace.png' %}'></a>
           <a class="navbar-brand" href="{% url 'soundspace:stream' %}">Home</a>
-          <a class="navbar-brand" href="{% url 'upload:index' %}">Uploads</a>
+          <a class="navbar-brand" href="{% url 'upload:index' %}">Upload!</a>
           <a class="navbar-brand" href="{% url 'soundspace:user' id=request.session.user_id %}">{{request.session.username}}</a>
           <a class="navbar-brand searchbar">
             <form method="get" action="{% url 'soundspace:search' %}">
@@ -59,6 +59,14 @@
               <input type="submit" value=""/>
             </form>
           </a>
+        </div>
+        <div class="dropdown">
+          <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">{{request.session.username}}
+          <span class="caret"></span></button>
+          <ul class="dropdown-menu">
+            <li><a href="{% url 'soundspace:update_profile' id=request.session.user_id %}">Edit Your Account!</a></li>
+            <li><a href="{% url 'soundspace:user' id=request.session.user_id %}">Your Profile Page!</a></li>
+          </ul>
         </div>
         <div id="navbar" class="navbar-collapse collapse">
           <form class="navbar-form navbar-right" action='{% url 'soundspace:logout' %}' method='POST'>
@@ -70,8 +78,12 @@
     </nav>
     <div class="jumbotron">
       <div class="container">
-
         <div class='profile'>
+          {% if messages %}
+            {% for message in messages %}
+              {{message}}
+            {% endfor %}
+          {% endif %}
           <h2>{{profile_user.name}}</h2>
           {% if profile_user.image %}
             <img class='profilepic' src='{% static 'soundcloud/' %}{{profile_user.image}}' alt='Profile Picture'>
@@ -102,7 +114,13 @@
           <br>
           {% endif %}
           <p>Followers: {{num_followers}}</p>
+          {% for user_follower in user_follows %}
+          <a href="{% url 'soundspace:user' id=user_follower.follower.id %}">{{user_follower.follower.name}}</a>
+          {% endfor %}
           <p>Following: {{num_following}}</p>
+          {% for user_following in user_followings %}
+          <a href="{% url 'soundspace:user' id=user_following.following.id %}">{{user_following.following.name}}</a>
+          {% endfor %}
           <br>
         </div>
       </div>
@@ -203,7 +221,6 @@
           {% endfor %}
           <br><br>
           {% endfor %}
-
         </div>
         <div class="col-md-3">
           <h3>Playlists:</h3>
