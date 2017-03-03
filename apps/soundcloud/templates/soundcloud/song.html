@@ -22,38 +22,7 @@
     <!-- Custom styles for this template -->
     <link href="{% static 'soundcloud/css/jumbotron.css' %}" rel="stylesheet">
 
-    <!-- Just for debugging purposes. Don't actually copy these 2 lines! -->
-    <!--[if lt IE 9]><script src="../../assets/js/ie8-responsive-file-warning.js"></script><![endif]-->
     <script src="{% static 'soundcloud/js/ie-emulation-modes-warning.js' %}"></script>
-    <style>
-      #pButton{
-        height:80px;
-        width: 80px;
-        border: none;
-        background-size: 50% 50%;
-        background-position: center;
-        display: inline-block;
-      }
-      .play{background: url('{% static "soundcloud/images/playbutton.png" %}') no-repeat;}
-      .pause{background: url('{% static "soundcloud/images/pausebutton.png" %}') no-repeat;}
-      #timeline{
-        width: 20%;
-        height: 20px;
-        margin-top: 30px;
-        border-radius: 15px;
-        display: inline-block;
-        vertical-align: top;
-        background: rgba(0,0,0,.3);
-      }
-      #playhead{
-        width: 18px;
-        height: 18px;
-        border-radius: 50%;
-        margin-top: 1px;
-        background: rgba(0, 0, 0,1);
-      }
-
-    </style>
   </head>
 
   <body>
@@ -115,37 +84,60 @@
         </div>
 
         </div>
-        <!-- <a href="{% url 'soundspace:update_profile' id=request.session.user_id %}">Edit your account!</a><br> -->
+        <div class='activitybar'>
+        {% if song.id in user_liked %}
+        <div class='unlikebtn'>
+          <form action="{% url 'soundspace:unlike' %}" method="post">
+          {% csrf_token %}
+            <input hidden name='song_id' value='{{song.id}}'>
+            <input class='unlike'type="submit" value="" />
+          </form>
+        </div>
+        {% else %}
+        <div class='likebtn'>
+        <form action="{% url 'soundspace:like' %}" method="post">
+          {% csrf_token %}
+          <input hidden name='song_id' value='{{song.id}}'>
+          <input type="submit" value="" />
+        </form>
+        </div>
+        {% endif %}
+        {% if not song.joined %}
+        <div class='repost'>
+          <form class="" action="{% url 'upload:repost' id=song.id %}" method="post">
+            {% csrf_token %}
+            <input type="submit" name="" value="">
+          </form>
+        </div>
+        {% endif %}
+        <div class='playlist'>
+          <form class="" action="{% url 'upload:add_playlist' id=song.id %}" method="post">
+            {% csrf_token %}
+            <input type="submit" name="add" value="">
+            <select class="" name="playlist_id">
+              {% for playlist in playlists %}
+                <option value="{{playlist.id}}">{{playlist.name}}</option>
+              {% endfor %}
+            </select>
+          </form>
+        </div>
+      </div>
+      <!-- <a href="{% url 'soundspace:update_profile' id=request.session.user_id %}">Edit your account!</a><br> -->
       </div>
     </div>
 
     <div class="container">
       <div class="feed">
-        {% if song.id in user_liked %}
-          <form action="{% url 'soundspace:unlike' %}" method="post">
-          {% csrf_token %}
-            <input hidden name='song_id' value='{{song.id}}'>
-            <input class='unlike'type="submit" value="Unlike" />
-            <br>
-          </form>
-        {% else %}
-          <form action="{% url 'soundspace:like' %}" method="post">
-            {% csrf_token %}
-            <input hidden name='song_id' value='{{song.id}}'>
-            <input type="submit" value="Like" />
-            <br>
-          </form>
-        {% endif %}
-        <br>
-        {% social_widget_render "twitter/share_button.html" href="" %}<br>
-        <div class="fb-share-button" data-href="https://developers.facebook.com/docs/plugins/" data-layout="button" data-size="small" data-mobile-iframe="true"><a class="fb-xfbml-parse-ignore" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Fdevelopers.facebook.com%2Fdocs%2Fplugins%2F&amp;src=sdkpreparse">Share</a></div>
-        <br><br>
         <form action="{% url 'soundspace:addcomment' %}" method="post">
           {% csrf_token %}
           {{commentForm.as_p}}
           <input hidden name='song_id' value='{{song.id}}'>
           <input type="submit" value="Comment" />
         </form>
+        <br>
+        {% social_widget_render "twitter/share_button.html" href="" %}<br>
+        <div class="fb-share-button" data-href="https://developers.facebook.com/docs/plugins/" data-layout="button" data-size="small" data-mobile-iframe="true"><a class="fb-xfbml-parse-ignore" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Fdevelopers.facebook.com%2Fdocs%2Fplugins%2F&amp;src=sdkpreparse">Share</a></div>
+
 
       <div class="row">
         <div class="col-md-4">

@@ -3,7 +3,7 @@ from django.core.urlresolvers import reverse
 from ..upload.models import *
 from ..loginandreg.models import *
 from .models import *
-from .forms import CommentForm, UpdateForm
+from .forms import *
 from .utils import *
 
 QUERY="search-query"
@@ -20,6 +20,7 @@ def index(request):
         if l.user_id == request.session['user_id']:
             user_likes[l.song_id] = True
     context = {
+        'logged_on_user': logged_on_user,
         'commentForm': CommentForm(),
         'all_songs': Song.objects.all().order_by('-created_at'),
         'comments': Comment.objects.all(),
@@ -69,26 +70,30 @@ def user(request, id):
             user_likes[l.song_id] = True
     try:
         context = {
-            'reposts':Repost.objects.get(user_id=id),
+            'reposts':Repost.objects.filter(user_id=id),
             'playlists':playlists,
             'profile_user': profile_user,
             'commentForm': CommentForm(),
+            'playlistForm': PlaylistForm(),
             'following': Relationship.objects.get(following=profile_user, follower=logged_on_user),
             'num_followers': num_followers,
             'num_following': num_following,
             'all_songs': all_songs,
             'user_liked': user_likes,
+            'comments': Comment.objects.all(),
         }
     except:
         context = {
-            'reposts':reposts,
+            'reposts':Repost.objects.filter(user_id=id),
             'playlists':playlists,
             'profile_user': profile_user,
             'commentForm': CommentForm(),
+            'playlistForm': PlaylistForm(),
             'num_followers': num_followers,
             'num_following': num_following,
             'all_songs': all_songs,
             'user_liked': user_likes,
+            'comments': Comment.objects.all(),
         }
     return render(request, 'soundcloud/userinfo.html', context)
 
@@ -100,9 +105,10 @@ def update_profile(request, id):
         'updateForm': UpdateForm(),
     }
     if request.method == 'POST':
-        User.objects.update_user(request.POST)
-        return redirect(reverse('soundspace:stream'))
-    return render(request, 'soundcloud/user.html', context)
+        User.objects.update_user(request.POST, request.FILES)
+        request.session['username'] = request.POST['name']
+        return redirect(reverse('soundspace:update_profile', kwargs={'id':id}))
+    return render(request, 'soundcloud/updateinfo.html', context)
 
 def create_comment(request):
     if request.method == 'POST':

@@ -3,3 +3,146 @@ body {
   padding-top: 50px;
   padding-bottom: 20px;
 }
+.activitybar{
+  margin-left: 2.5%;
+}
+.profilepic{
+  height: 200px;
+  width: 200px;
+}
+.song-cover{
+  height: 50px;
+  width: 50px;
+}
+.commentprofilepic{
+  height: 50px;
+  width: 50px;
+  vertical-align: top;
+}
+.commentuserpic{
+  height: 30px;
+  width: 30px;
+  vertical-align: top;
+}
+.song-image{
+  vertical-align: top;
+  margin-left: 2.5%;
+}
+.song-info{
+  padding-left: 1.5%;
+}
+.song-title{
+  font-size: 1.4em;
+}
+.song-info, .song-image, .profile, .comment-user-img, .comment{
+  display: inline-block;
+}
+.comment{
+  margin-left: 2.5%;
+  padding-top: 1%;
+  padding-bottom: 1%;
+}
+.followbox{
+  float:right;
+  margin-right: 10%;
+  vertical-align: top;
+  display:inline-block;
+}
+.follow input[type=submit] {
+    background: url(../images/followbutton.png) no-repeat top left;
+    margin-top: 2.5%;
+    border: 0;
+    display: block;
+    height:75px;
+    width: 100px;
+}
+.unfollow input[type=submit] {
+    background: url(../images/unfollow.png) no-repeat top left;
+    margin-top: 25%;
+    border: 0;
+    display: block;
+    height:30px;
+    width: 30px;
+}
+.searchbar input[type=submit] {
+    background: url(../images/search.png) no-repeat top left;
+    border: 0;
+    height:20px;
+    width: 20px;
+}
+.playlist, .likebtn, .likebtn form, .unlikebtn, .unlikebtn form, .repost, .repost form, .comment form{
+  display: inline-block;
+  vertical-align: top;
+}
+.playlist input[type=submit] {
+    background: url(../images/playlist.png) no-repeat top left;
+    border: 0;
+    height:25px;
+    width: 25px;
+    display: inline-block;
+}
+.likebtn input[type=submit] {
+    background: url(../images/like.png) no-repeat top left;
+    border: 0;
+    height:25px;
+    width: 25px;
+    display: inline-block;
+}
+.unlikebtn input[type=submit] {
+    background: url(../images/liked.png) no-repeat top left;
+    border: 0;
+    height:25px;
+    width: 25px;
+    display: inline-block;
+}
+.repost input[type=submit] {
+    background: url(../images/repost.png) no-repeat;
+    margin-top: 2px;
+    border: 0;
+    height:20px;
+    width: 20px;
+    display: inline-block;
+}
+.commentbox input[type=submit] {
+    background: url(../images/comment.png) no-repeat;
+    margin: 2px 0px 0px 5px;
+    border: 0;
+    height:45px;
+    width: 45px;
+    display: inline-block;
+}
+.comment input[type=submit] {
+    background: url(../images/delete.png) no-repeat;
+    margin: 0px 0px 0px 5px;
+    border: 0;
+    height:20px;
+    width: 20px;
+    display: inline-block;
+}
+#pButton{
+  height:80px;
+  width: 80px;
+  border: none;
+  background-size: 50% 50%;
+  background-position: center;
+  display: inline-block;
+}
+.play{background: url(../images/playbutton.png) no-repeat;}
+.pause{background: url(../images/pausebutton.png) no-repeat;}
+
+#timeline{
+  width: 20%;
+  height: 20px;
+  margin-top: 30px;
+  border-radius: 15px;
+  display: inline-block;
+  vertical-align: top;
+  background: rgba(0,0,0,.3);
+}
+#playhead{
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  margin-top: 1px;
+  background: rgba(0, 0, 0,1);
+}

@@ -18,12 +18,8 @@ def index(request):
 def create(request):
     user = User.objects.get(id=request.session['user_id'])
     song = request.FILES['song']
-    image = request.FILES['image']
-    files= FileSystemStorage()
-    name=files.save(song.name, song)
-    look = files.save(image.name, image)
-    location = files.url(name)
-    new = Song.objects.create(user=user, artist=request.POST['artist'], description = request.POST['description'] , genre= request.POST['genre'] , title= request.POST['title'], image=request.FILES['image'] , song= request.FILES['song'], )
+    cover_image = request.FILES.get('cover_image', 'images/nosong.png')
+    new = Song.objects.create(user=user, artist=request.POST['artist'], description = request.POST['description'] , genre= request.POST['genre'] , title= request.POST['title'], cover_image=cover_image , song= request.FILES['song'], )
     added_tags= request.POST['tags']
     all_tags= added_tags.split(',')
     for new_tag in all_tags:

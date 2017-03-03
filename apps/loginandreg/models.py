@@ -1,6 +1,7 @@
 from __future__ import unicode_literals
 from django.db import models
 from django.contrib import messages
+from django.core.files.storage import FileSystemStorage
 from django.core.exceptions import ValidationError
 from django.core.validators import RegexValidator
 import bcrypt
@@ -34,7 +35,7 @@ class UserManager(models.Manager):
         user = User.objects.get(email=email)
         return {'uid': user.id, 'user_name':user.name}
 
-    def update_user(self, info, **kwargs):
+    def update_user(self, info, files, **kwargs):
         email = info['email']
         password = info['password']
         pw_hash = bcrypt.hashpw(password.encode(), bcrypt.gensalt())
@@ -43,10 +44,12 @@ class UserManager(models.Manager):
             user.name = info['name']
             user.gender = info['gender']
             user.email = info['email']
+            user.image = files['picture']
             user.password = pw_hash
             user.age = info['age']
             user.description = info['description']
             user.save()
+            request.session['username'] = info['name']
             return {'success': 'User information has been updated!'}
         except:
             return {'error': 'ERROR'}
@@ -62,7 +65,7 @@ class User(models.Model):
     email = models.EmailField(unique=True)
     password = models.CharField(max_length=100)
     age = models.IntegerField(null=True)
-    image = models.FileField(upload_to='profileimage', null=True)
+    image = models.FileField(upload_to='profileimage', default='profileimage/default-profile-picture.jpeg')
     description= models.TextField(max_length=2000, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)

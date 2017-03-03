@@ -31,7 +31,7 @@ class DocumentForm(forms.ModelForm):
 
     class Meta:
         model = Song
-        fields = ('song', 'title', 'artist', 'description', 'tags', 'image')
+        fields = ('song', 'title', 'artist', 'description', 'tags', 'cover_image')
         labels = {
 
         }
