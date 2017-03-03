@@ -96,7 +96,7 @@
               {% csrf_token %}
                 <input hidden name='followerid' value='{{request.session.user_id}}'>
                 <input hidden name='unfollowid' value='{{profile_user.id}}'>
-                <input type='submit' name='unfollow' value='Un'>
+                <input type='submit' name='unfollow' value=''>
               </form>
             </div>
           <br>
