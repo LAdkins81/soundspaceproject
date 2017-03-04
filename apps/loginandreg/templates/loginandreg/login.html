@@ -60,7 +60,7 @@
       <div class="starter-template">
         {% if messages %}
           {% for m in messages %}
-            <div id="messages">{{m}}</div>
+            <div id="messages"><p>{{m}}</p></div>
           {% endfor %}
         {% endif %}
         <form action='{% url 'loginandreg:login_user' %}' method='POST'>

@@ -60,9 +60,10 @@ def delete_playlist_song(request, id):
 def playlist_info(request, id):
     playlist = Playlist.objects.get(id=id)
     songs=playlist.songs.all()
-
+    user=playlist.user
     context={
-        'songs':songs,
+        'user': user,
+        'songs': songs,
         'playlist':playlist
     }
     if playlist.user_id != request.session['user_id']:

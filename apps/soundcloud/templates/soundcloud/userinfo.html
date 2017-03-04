@@ -51,7 +51,6 @@
           <a class="navbar-brand" href="{% url 'loginandreg:homepage' %}"><img src='{% static 'loginandreg/image/soundspace.png' %}'></a>
           <a class="navbar-brand" href="{% url 'soundspace:stream' %}">Home</a>
           <a class="navbar-brand" href="{% url 'upload:index' %}">Upload!</a>
-          <a class="navbar-brand" href="{% url 'soundspace:user' id=request.session.user_id %}">{{request.session.username}}</a>
           <a class="navbar-brand searchbar">
             <form method="get" action="{% url 'soundspace:search' %}">
               <label for="id_q">Search:</label>
@@ -59,13 +58,11 @@
               <input type="submit" value=""/>
             </form>
           </a>
-        </div>
-        <div class="dropdown">
-          <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">{{request.session.username}}
-          <span class="caret"></span></button>
+          <a class="navbar-brand dropdown-toggle" type="button" data-toggle="dropdown"> {{request.session.username}}
+          <span class="caret"></span></a>
           <ul class="dropdown-menu">
-            <li><a href="{% url 'soundspace:update_profile' id=request.session.user_id %}">Edit Your Account!</a></li>
-            <li><a href="{% url 'soundspace:user' id=request.session.user_id %}">Your Profile Page!</a></li>
+            <li><a href="{% url 'soundspace:update_profile' id=request.session.user_id %}">Edit Profile</a></li>
+            <li><a href="{% url 'soundspace:user' id=request.session.user_id %}">Profile</a></li>
           </ul>
         </div>
         <div id="navbar" class="navbar-collapse collapse">
@@ -92,8 +89,8 @@
         </div>
 
         <div class='followbox'>
-          <div class='follow'>
           {% if not following %}
+          <div class='follow'>
             <form action='{% url 'soundspace:follow' %}' method='POST'>
             {% csrf_token %}
               <input hidden name='followerid' value='{{request.session.user_id}}'>
@@ -103,16 +100,16 @@
           </div>
           <br>
           {% elif following %}
-            <div class='unfollow'>
-              <form action='{% url 'soundspace:unfollow' %}' method='POST'>
-              {% csrf_token %}
-                <input hidden name='followerid' value='{{request.session.user_id}}'>
-                <input hidden name='unfollowid' value='{{profile_user.id}}'>
-                <input type='submit' name='unfollow' value=''>
-              </form>
-            </div>
-          <br>
+          <div class='unfollow'>
+            <form action='{% url 'soundspace:unfollow' %}' method='POST'>
+            {% csrf_token %}
+              <input hidden name='followerid' value='{{request.session.user_id}}'>
+              <input hidden name='unfollowid' value='{{profile_user.id}}'>
+              <input type='submit' name='unfollow' value=''>
+            </form>
+          </div>
           {% endif %}
+          <br>
           <p>Followers: {{num_followers}}</p>
           {% for user_follower in user_follows %}
           <a href="{% url 'soundspace:user' id=user_follower.follower.id %}">{{user_follower.follower.name}}</a>
@@ -135,7 +132,7 @@
             <img class='song-cover' src='{% static 'soundcloud/' %}{{song.cover_image}}' alt='Song Cover'>
           </div>
           <div class='song-info'>
-            <a href='{% url 'soundspace:song' id=song.id %}'><span class='song-title'>{{song.title}}</a> - {{song.artist}}</span>
+            <a href='{% url 'soundspace:song' id=song.id %}'><span class='song-title'>{{song.title}}</a> - <a href="{% url 'soundspace:artist_info' name=song.artist %}">{{song.artist}}</a></span>
             <p>Posted by: <a href='{% url 'soundspace:user' id=song.user.id %}'>{{song.user.name}}</a> {{song.created_at|date:"M d H:i"}}</p>
             {% social_widget_render "twitter/share_button.html" href="" %}<br>
             <div class="fb-share-button" data-href="http://127.0.0.1:8000/soundspace/{{song.id}}" data-layout="button" data-size="small" data-mobile-iframe="true"><a class="fb-xfbml-parse-ignore" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Fdevelopers.facebook.com%2Fdocs%2Fplugins%2F&amp;src=sdkpreparse">Share</a></div>
@@ -224,16 +221,16 @@
         </div>
         <div class="col-md-3">
           <h3>Playlists:</h3>
+          {% for playlist in playlists%}
+            <p><a href="{% url 'upload:playlist_info' id=playlist.id %}">{{playlist.name}}</a></p>
+          {% endfor %}
+          <br>
           <form class="" action="{% url 'upload:create_playlist' %}" method="post">
             {% csrf_token %}
             {{playlistForm.as_p}}
             <input type="submit" name="" value="Create a playlist">
           </form>
-          {% for playlist in playlists%}
-              <ol>
-                <li><a href="{% url 'upload:playlist_info' id=playlist.id %}">{{playlist.name}}</a>: Genre: {{playlist.genre}}, Description: {{playlist.description}} </li>
-              </ol>
-          {% endfor %}
+
         </div>
 
         <div class="col-md-3">

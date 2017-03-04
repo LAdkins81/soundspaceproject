@@ -46,6 +46,7 @@ def song(request, id):
         'commentForm': CommentForm(),
         'song': Song.objects.get(id=id),
         'user_liked': user_likes,
+        'comments': Comment.objects.all(),
     }
     return render(request, 'soundcloud/song.html', context)
 
@@ -66,30 +67,12 @@ def user(request, id):
                 song.joined=True
             else:
                 song.joined=False
-
     likes = Like.objects.filter(user=logged_on_user)
     user_likes = {}
     for l in likes:
         if l.user_id == request.session['user_id']:
             user_likes[l.song_id] = True
-    try:
-        context = {
-            'reposts':Repost.objects.filter(user_id=id),
-            'playlists':playlists,
-            'profile_user': profile_user,
-            'commentForm': CommentForm(),
-            'playlistForm': PlaylistForm(),
-            'following': Relationship.objects.get(following=profile_user, follower=logged_on_user),
-            'num_follows': num_follows,
-            'num_following': num_following,
-            'all_songs': all_songs,
-            'user_liked': user_likes,
-            'user_followers':user_followers,
-            'user_followings':user_followings,
-            'comments': Comment.objects.all(),
-        }
-    except:
-        context = {
+    context = {
             'reposts':Repost.objects.filter(user_id=id),
             'playlists':playlists,
             'profile_user': profile_user,
@@ -102,7 +85,8 @@ def user(request, id):
             'user_follows':user_follows,
             'user_followings':user_followings,
             'comments': Comment.objects.all(),
-        }
+            'following': Relationship.objects.filter(follower=logged_on_user, following=profile_user),
+            }
     return render(request, 'soundcloud/userinfo.html', context)
 
 

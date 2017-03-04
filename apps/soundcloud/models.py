@@ -20,7 +20,10 @@ class RelationshipManager(models.Manager):
     def unfollow(self, info, **kwargs):
         unfollow = User.objects.get(id=info['unfollowid'])
         follower = User.objects.get(id=info['followerid'])
-        Relationship.objects.get(following=unfollow, follower=follower).delete()
+        try:
+            Relationship.objects.get(following=unfollow, follower=follower).delete()
+        except:
+            pass
         return {'success': 'Unfollowed!'}
 
 class Relationship(models.Model):

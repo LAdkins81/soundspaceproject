@@ -56,13 +56,11 @@
               <input class='search' type="submit" value="Submit"/>
             </form>
           </a>
-        </div>
-        <div class="dropdown">
-          <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">{{request.session.username}}
-          <span class="caret"></span></button>
+          <a class="navbar-brand dropdown-toggle" type="button" data-toggle="dropdown"> {{request.session.username}}
+          <span class="caret"></span></a>
           <ul class="dropdown-menu">
-            <li><a href="{% url 'soundspace:update_profile' id=request.session.user_id %}">Edit Your Account!</a></li>
-            <li><a href="{% url 'soundspace:user' id=request.session.user_id %}">Your Profile Page!</a></li>
+            <li><a href="{% url 'soundspace:update_profile' id=request.session.user_id %}">Edit Profile</a></li>
+            <li><a href="{% url 'soundspace:user' id=request.session.user_id %}">Profile</a></li>
           </ul>
         </div>
         <div id="navbar" class="navbar-collapse collapse">
@@ -70,7 +68,6 @@
             {% csrf_token %}
             <button type="submit" class="btn btn-success">Sign Out</button>
           </form>
-
         </div><!--/.navbar-collapse -->
       </div>
     </nav>
@@ -127,23 +124,46 @@
             </select>
           </form>
         </div>
+        <br>
+        {% social_widget_render "twitter/share_button.html" href="" %}<br>
+        <div class="fb-share-button" data-href="https://developers.facebook.com/docs/plugins/" data-layout="button" data-size="small" data-mobile-iframe="true"><a class="fb-xfbml-parse-ignore" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Fdevelopers.facebook.com%2Fdocs%2Fplugins%2F&amp;src=sdkpreparse">Share</a></div>
       </div>
       <!-- <a href="{% url 'soundspace:update_profile' id=request.session.user_id %}">Edit your account!</a><br> -->
       </div>
     </div>
 
     <div class="container">
-      <div class="feed">
+      <div class='commentbox'>
         <form action="{% url 'soundspace:addcomment' %}" method="post">
           {% csrf_token %}
-          {{commentForm.as_p}}
+          {% if logged_on_user.image %}
+            <img class='commentprofilepic' src='{% static 'soundcloud/' %}{{logged_on_user.image}}' alt='Profile Picture'>
+          {% endif %}
+          {{commentForm}}
           <input hidden name='song_id' value='{{song.id}}'>
-          <input type="submit" value="Comment" />
+          <input type="submit" value="" />
         </form>
-        <br>
-        {% social_widget_render "twitter/share_button.html" href="" %}<br>
-        <div class="fb-share-button" data-href="https://developers.facebook.com/docs/plugins/" data-layout="button" data-size="small" data-mobile-iframe="true"><a class="fb-xfbml-parse-ignore" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Fdevelopers.facebook.com%2Fdocs%2Fplugins%2F&amp;src=sdkpreparse">Share</a></div>
-
+      </div>
+          {% for comment in comments %}
+            {% if comment.song.id == song.id %}
+            <div class='bigcommentbox'>
+              <div class="comment-user-img">
+                <img class='commentuserpic' src='{% static 'soundcloud/' %}{{comment.user.image}}'>
+              </div>
+              <div class='comment'>
+              <a href='{% url 'soundspace:user' id=comment.user.id %}'><p>{{comment.user.name}}</a> at {{comment.created_at|date:"M d H:i"}}</p>
+              {{comment.comment}}
+              {% if comment.user.id == request.session.user_id %}
+              <form action="{% url 'soundspace:deletecomment' %}" method="post">
+                {% csrf_token %}
+                <input hidden name='comment_id' value='{{comment.id}}'>
+                <input type="submit" value="" />
+              </form>
+              {% endif %}
+              </div>
+            </div>
+            {% endif %}
+        {% endfor %}
 
       <div class="row">
         <div class="col-md-4">

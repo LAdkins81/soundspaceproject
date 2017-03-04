@@ -34,6 +34,10 @@ body {
 .song-title{
   font-size: 1.4em;
 }
+.userplaylist{
+  display: inline-block;
+  vertical-align: top;
+}
 .song-info, .song-image, .profile, .comment-user-img, .comment{
   display: inline-block;
 }
